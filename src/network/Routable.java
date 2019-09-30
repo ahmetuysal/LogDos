@@ -28,4 +28,34 @@ public abstract class Routable {
 	 * A list of <code>Route</code> objects that describe routes originated from this <code>Routable</code>.
 	 */
 	private ArrayList<Route> routeList;
+
+	/**
+	 * @return the <code>Domain</code> of this <code>Routable</code>
+	 */
+	public Domain getDomain() {
+		return this.domain;
+	}
+
+	/**
+	 * @param <code>Domain</code> of this <code>Routable</code>
+	 */
+	public void setDomain(Domain domain) {
+		this.domain = domain;
+	}
+
+	/**
+	 * @return the <code>UUID</code> of this <code>Routable</code>
+	 */
+	public UUID getUuid() {
+		return this.uuid;
+	}
+
+	/**
+	 * @return the <code>ArrayList</code> of list of <code>Route</code> objects this <code>Routable</code>
+	 */
+	public ArrayList<Route> getRouteList() {
+		return this.routeList;
+	}
+	
+	
 }
