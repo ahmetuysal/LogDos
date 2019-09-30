@@ -1,6 +1,10 @@
 package network;
 
-public class Domain implements Routable{
+/**
+ * @author Ahmet Uysal @ahmetuysal
+ *
+ */
+public class Domain extends Routable{
 	
 	//TODO Implement.
 
