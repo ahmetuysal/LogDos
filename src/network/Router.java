@@ -1,6 +1,6 @@
 package network;
 
-public class Router implements Routable {
+public class Router extends Routable {
 	
 	//TODO Implement.
 
