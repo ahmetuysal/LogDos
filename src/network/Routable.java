@@ -7,7 +7,7 @@ import java.util.UUID;
  * 
  * The abstract class that describes any object that can be routed to.
  * 
- * @author Kaan YÄ±ldÄ±rÄ±m @kyildirim, Ahmet Uysal @ahmetuysal, Ceren Kocaoğullar @ckocaogullar15
+ * @author Kaan Yıldırım @kyildirim, Ahmet Uysal @ahmetuysal, Ceren Kocaoğullar @ckocaogullar15
  * @see Client
  * @see Router
  *
