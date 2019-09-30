@@ -1,5 +1,11 @@
 package config;
 
+/**
+ * A class that stores the required variables to tune the simulation.
+ * 
+ * @author kyildirim
+ *
+ */
 public class SimulationConfiguration {
 
 	/**
