@@ -14,7 +14,7 @@ public class NetworkTopology {
 	/**
 	 * A list of <code>Domain</code> objects that are in this <code>NetworkTopology</code>.
 	 */
-	private ArrayList<Domain> domainList;
+	private ArrayList<Domain> domainList = new ArrayList<>();
 	/**
 	 * A list of <code>Route</code> objects that are in this <code>NetworkTopology</code>.
 	 */
