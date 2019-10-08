@@ -15,6 +15,25 @@ public class Route {
 	 */
 	private UUID pid;
 	
+	
+	//TODO: Review and fix below.
+	/**
+	 * @return the pid
+	 */
+	public UUID getPid() {
+		return this.pid;
+	}
+	/**
+	 * @param pid the pid to set
+	 */
+	public void setPid(UUID pid) {
+		this.pid = pid;
+	}
+	public Route() {
+		this.pid = UUID.randomUUID();
+	}
+	
+	
 	/**
 	 * <code>{@link Routable}</code> object that is the origin of this <code>Route</code>.
 	 */
