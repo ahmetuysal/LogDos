@@ -42,7 +42,7 @@ public abstract class Routable {
 	/**
 	 * A list of <code>Route</code> objects that describe routes originated from this <code>Routable</code>.
 	 */
-	private ArrayList<Route> routeList;
+	private ArrayList<Route> routeList = new ArrayList<>();
 	
 	public Routable() {
 		this.uuid = UUID.randomUUID();
@@ -74,6 +74,12 @@ public abstract class Routable {
 	 */
 	public ArrayList<Route> getRouteList() {
 		return this.routeList;
+	}
+	/**
+	 * @param _routeList A list of <code>Route</code> objects that are to be in this <code>NetworkTopology</code>.
+	 */
+	public void setRouteList(ArrayList<Route> _routeList) {
+		this.routeList = _routeList;
 	}
 	
 	
