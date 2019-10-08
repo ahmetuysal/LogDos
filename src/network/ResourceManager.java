@@ -36,10 +36,10 @@ public class ResourceManager extends Routable {
 	public void registerService(Service _service, Routable _routable) {
 	    HashSet<UUID> routableSet = this.registrationTable.get(_service.getSid()) ;
 		if(routableSet != null) {
-			routableSet.add(_routable.getUuid());
+			routableSet.add(_routable.getUUID());
 		} else {
 			routableSet = new HashSet<UUID>();
-			routableSet.add(_routable.getUuid());
+			routableSet.add(_routable.getUUID());
 		}
 	}
 

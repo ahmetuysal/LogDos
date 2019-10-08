@@ -13,7 +13,7 @@ public class Playground {
 
 	public static void main(String[] args) {
 		//Playground method for quick testing.
-		NetworkTopology nt = new NetworkTopology();
+		NetworkTopology nt = new NetworkTopology.Builder().build();
 		Stack<Router> routers = new Stack<>();
 		ArrayList<Route> routes = new ArrayList<>();
 		

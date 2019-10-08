@@ -20,20 +20,12 @@ public abstract class Routable {
 	private UUID uuid;
 	
 	
-	//TODO: Review and fix. 
 	/**
-	 * @return the uuid
+	 * @return the <code>UUID</code> of this <code>Routable</code>
 	 */
 	public UUID getUUID() {
 		return this.uuid;
 	}
-	/**
-	 * @param uuid the uuid to set
-	 */
-	public void setUUID(UUID uuid) {
-		this.uuid = uuid;
-	}
-
 	/**
 	 * Domain of this <code>Routable</code>.
 	 */
@@ -62,12 +54,6 @@ public abstract class Routable {
 		this.domain = domain;
 	}
 
-	/**
-	 * @return the <code>UUID</code> of this <code>Routable</code>
-	 */
-	public UUID getUuid() {
-		return this.uuid;
-	}
 
 	/**
 	 * @return the <code>ArrayList</code> of list of <code>Route</code> objects this <code>Routable</code>

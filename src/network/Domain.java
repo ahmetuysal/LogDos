@@ -9,6 +9,7 @@ public class Domain extends Routable {
 	 */
 	public Domain() {
 		super();
+		createResourceManager();
 	}
 	
 	/**
@@ -16,6 +17,10 @@ public class Domain extends Routable {
 	 */
 	private ArrayList<Routable> routableList = new ArrayList<>();
 
+	/**
+	 * <code> ResourceManager </code> of the <code>NetworkTopology</code>.
+	 */
+	private ResourceManager resourceManager = new ResourceManager();
 	/**
 	 * @return A list of <code>Routable</code> objects that are in this <code>NetworkTopology</code>.
 	 */
@@ -44,5 +49,17 @@ public class Domain extends Routable {
 	 */
 	public boolean removeRoutable(Routable _routable) {
 		return this.routableList.remove(_routable);
+	}
+	/**
+	 * @return <code> ResourceManager </code> of the <code>NetworkTopology</code>.
+	 */
+	public ResourceManager getResourceManager() {
+		return this.resourceManager;
+	}
+	/**
+	 * @param _resourceManager <code> ResourceManager </code> of the <code>NetworkTopology</code>.
+	 */
+	private void createResourceManager() {
+		this.resourceManager = new ResourceManager();
 	}
 }
