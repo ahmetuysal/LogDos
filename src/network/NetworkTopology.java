@@ -70,6 +70,7 @@ public class NetworkTopology {
 			for(Domain d : nt.getDomainList()) {
 				ArrayList<Client> clientList = new ArrayList<>();
 				ArrayList<Router> routerList = new ArrayList<>();
+				HashMap<Router, ArrayList<Router>> availableRouterList = new HashMap<>();
 				d.getRoutableList().forEach(r -> {
 					if(r instanceof Client) {
 						clientList.add((Client)r);
@@ -125,27 +126,41 @@ public class NetworkTopology {
 						routeList.add(route);
 				    }
 				}*/
-				Stack<Router> routerStack = new Stack<Router>();
-				routerStack.addAll(routerList.subList((routerList.size()-1)/3, routerList.size()));
-				ArrayList<Router> routerStack2 = new ArrayList<Router>();
-				routerStack2.addAll(routerList.subList(0, (routerList.size()-1)/3+1));
-				
-				for(int i = 0; i<routerStack2.size()-2; i++) {
-					Route route = new Route();
-					route.setOrigin(routerStack2.get(i));
-					route.setDestination(routerStack2.get(i+1));
-					routeList.add(route);
+//				Stack<Router> routerStack = new Stack<Router>();
+//				routerStack.addAll(routerList.subList((routerList.size()-1)/3, routerList.size()));
+//				ArrayList<Router> routerStack2 = new ArrayList<Router>();
+//				routerStack2.addAll(routerList.subList(0, (routerList.size()-1)/3+1));
+//				
+//				for(int i = 0; i<routerStack2.size()-2; i++) {
+//					Route route = new Route();
+//					route.setOrigin(routerStack2.get(i));
+//					route.setDestination(routerStack2.get(i+1));
+//					routeList.add(route);
+//				}
+//				System.out.println(routerStack2.size());
+//				while(!routerStack.isEmpty()) {
+//					Route route = new Route();
+//					route.setOrigin(routerStack.pop());
+//					if(routerStack2.size()>1) {
+//						route.setDestination(routerStack2.get(new Random().nextInt(routerStack2.size()-1)));
+//					} else {
+//						route.setDestination(routerStack2.get(0));
+//					}
+//					routeList.add(route);
+//				}
+				for(Router r : routerList) {
+					availableRouterList.put(r, routerList);
 				}
-				System.out.println(routerStack2.size());
-				while(!routerStack.isEmpty()) {
-					Route route = new Route();
-					route.setOrigin(routerStack.pop());
-					if(routerStack2.size()>1) {
-						route.setDestination(routerStack2.get(new Random().nextInt(routerStack2.size()-1)));
-					} else {
-						route.setDestination(routerStack2.get(0));
+				for(Router r : routerList) {
+					for(int i = 0; i< new Random().nextInt(availableRouterList.get(r).size()-1); i++) {
+						Route route = new Route();
+						Router dest = availableRouterList.get(r).get(new Random().nextInt(availableRouterList.get(r).size()-1));
+						route.setOrigin(r);
+						route.setDestination(dest);
+						routeList.add(route);
+						availableRouterList.get(r).remove(dest);
+						availableRouterList.get(dest).remove(r);
 					}
-					routeList.add(route);
 				}
 				
 				d.addRoutable(d.getResourceManager());
