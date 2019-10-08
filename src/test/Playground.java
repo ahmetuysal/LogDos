@@ -1,20 +1,15 @@
 package test;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Stack;
-
 import graph.NetworkToGraphConverter;
-import network.Domain;
 import network.NetworkTopology;
-import network.Route;
-import network.Router;
 
 public class Playground {
 
 	public static void main(String[] args) {
 		//Playground method for quick testing.
-		NetworkTopology nt = new NetworkTopology.Builder().build();
+		NetworkTopology nt = new NetworkTopology.Builder().domainCount(10).build();
+		NetworkToGraphConverter.convertNetwork(nt).display();
+		/*
 		Stack<Router> routers = new Stack<>();
 		ArrayList<Route> routes = new ArrayList<>();
 		ArrayList<Domain> domains = new ArrayList<>();
@@ -36,7 +31,7 @@ public class Playground {
 			routes.add(route);
 		}
 		nt.setRouteList(routes);
-		/*
+		//
 		for(int i = 0; i<1000; i++) {
 			Route route = new Route();
 			Router origin = new Router();

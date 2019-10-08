@@ -3,7 +3,7 @@ package graph;
 import java.util.Random;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.graph.implementations.MultiGraph;
 
 import network.NetworkTopology;
 import network.Routable;
@@ -18,18 +18,19 @@ import network.Route;
 public class NetworkToGraphConverter {
 
 	public static Graph convertNetwork(NetworkTopology _network) {
-		Graph graph = new SingleGraph("NetworkTopology"); // TODO Unique id.
+		Graph graph = new MultiGraph("NetworkTopology"); // TODO Unique id.
 		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
-		String css = "node.networkRouter { size: 15px, 15px; shape: circle; }\n";
+		String css = "node.networkRouter { size: 15px, 15px; shape: circle; }\nnode.networkResourceManager { size: 15px, 15px; shape: box; }\n";
 		for(Object domain : _network.getDomainList()) {
 			Random obj = new Random();
 			int rand_num = obj.nextInt(0xffffff + 1);
 			String colorCode = String.format("#%06x", rand_num);
-			System.out.println(colorCode);
 			css += "node.class"+((Routable) domain).getUUID().toString().replace("-", "")+" {fill-color: "+ colorCode +";}\n";
 		}
 		graph.addAttribute("ui.stylesheet", css);
 		_network.getRoutableList().forEach(router -> {
+			System.out.println(router);
+			System.out.println(router.getClass().getName());
 			graph.addNode(((Routable) router).getUUID().toString()).addAttribute("ui.class", router.getClass().getName().replace(".", "") +", class"+((Routable) router).getDomain().getUUID().toString().replace("-", ""));
 		});
 		_network.getRouteList().forEach(route -> {

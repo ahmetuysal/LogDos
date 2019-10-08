@@ -24,6 +24,7 @@ public class ResourceManager extends Routable {
 	 * Creates a new <code>ResourceManager</code> instance and initializes its <code>registrationTable</code>.
 	 */
 	public ResourceManager() {
+		super();
 		this.registrationTable = new HashMap<>();
 	}
 

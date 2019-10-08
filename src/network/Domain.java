@@ -57,9 +57,10 @@ public class Domain extends Routable {
 		return this.resourceManager;
 	}
 	/**
-	 * @param _resourceManager <code> ResourceManager </code> of the <code>NetworkTopology</code>.
+	 * <code> ResourceManager </code> of the <code>NetworkTopology</code>.
 	 */
 	private void createResourceManager() {
 		this.resourceManager = new ResourceManager();
+		this.resourceManager.setDomain(this);
 	}
 }

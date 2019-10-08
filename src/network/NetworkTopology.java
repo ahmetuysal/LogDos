@@ -2,9 +2,8 @@ package network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
+import java.util.Stack;
 
 /**
  * An object that represents a network topology.
@@ -29,11 +28,11 @@ public class NetworkTopology {
 		/**
 		 * A list of <code>Routable</code> objects that are in this <code>NetworkTopology</code>.
 		 */
-		private ArrayList<Routable> routableList;
+		private ArrayList<Routable> routableList  = new ArrayList<>();;
 		/**
 		 * A table showing associations between <code>Routable</code> objects and the <code>Domain</code> objects they are contained within. 
 		 */
-		private HashMap<Routable, Domain> domainAssociationTable; 
+		private HashMap<Routable, Domain> domainAssociationTable = new HashMap<Routable, Domain>(); 
 
 		public Builder() {
 			
@@ -61,23 +60,31 @@ public class NetworkTopology {
 			
 			for(int i = 0; i<routableCount; i++) {
 				Routable routable = new Random().nextDouble() < 0.2 ? new Client() : new Router(); 
-				nt.routableList.add(routable);
-				Domain domain = nt.domainList.get(new Random().nextInt(nt.domainList.size()));
+				nt.addRoutable(routable);
+				Domain domain = nt.getDomainList().get(new Random().nextInt(nt.domainList.size()));
 				domain.addRoutable(routable);
 				routable.setDomain(domain);
 				domainAssociationTable.put(routable, domain);
 			}
 			
-			for(Domain d : nt.domainList) {
+			for(Domain d : nt.getDomainList()) {
 				ArrayList<Client> clientList = new ArrayList<>();
 				ArrayList<Router> routerList = new ArrayList<>();
-				for(Routable r : nt.getRoutableList()) {
+				d.getRoutableList().forEach(r -> {
+					if(r instanceof Client) {
+						clientList.add((Client)r);
+					} else if (r instanceof Router){
+						routerList.add((Router)r);
+					}
+				});
+				/*
+				for(Routable r : d.getRoutableList()) {
 					if(r instanceof Client) {
 						clientList.add((Client)r);
 					} else {
 						routerList.add((Router)r);
 					}
-				}
+				}*/
 				
 				for(Client c : clientList) {
 					Route route = new Route();
@@ -86,14 +93,21 @@ public class NetworkTopology {
 					routeList.add(route);
 				}
 				
-				for (int i = 0; i < routerList.size(); i++) {
+				{
+					Route route = new Route();
+					route.setOrigin(d.getResourceManager());
+					route.setDestination(routerList.get(new Random().nextInt(routerList.size()-1)));
+					routeList.add(route);
+				}
+				
+				/*for (int i = 0; i < routerList.size(); i++) {
 					Router router = routerList.get(i);
-					int routeCount = 1 + new Random().nextInt(routerList.size() - 2 - i);
+					int routeCount = 1 + new Random().nextInt(routerList.size() - i);
 					// Generates a set of min(count, maxValue) distinct random ints 
 					//  from [0, maxValue - 1] range.
 					Set<Integer> was = new HashSet<>();
 					int maxValue = routerList.size() - i;
-				    for (int j = Math.max(0, maxValue - routeCount); j < maxValue; j++) {
+				    for (int j = Math.max(1, maxValue - routeCount); j < maxValue; j++) {
 				        int curr = i + j == 0 ? 0 : new Random().nextInt(j);
 				        if (was.contains(curr))
 				            curr = i + j;
@@ -105,8 +119,43 @@ public class NetworkTopology {
 				    	Route route = new Route();
 						route.setOrigin(router);
 						route.setDestination(routerList.get(index));
+						if(router.equals(routerList.get(index))) {
+							route.setDestination(routerList.get(Math.abs(index-1)));
+						}
 						routeList.add(route);
 				    }
+				}*/
+				Stack<Router> routerStack = new Stack<Router>();
+				routerStack.addAll(routerList.subList((routerList.size()-1)/3, routerList.size()));
+				ArrayList<Router> routerStack2 = new ArrayList<Router>();
+				routerStack2.addAll(routerList.subList(0, (routerList.size()-1)/3+1));
+				
+				for(int i = 0; i<routerStack2.size()-2; i++) {
+					Route route = new Route();
+					route.setOrigin(routerStack2.get(i));
+					route.setDestination(routerStack2.get(i+1));
+					routeList.add(route);
+				}
+				System.out.println(routerStack2.size());
+				while(!routerStack.isEmpty()) {
+					Route route = new Route();
+					route.setOrigin(routerStack.pop());
+					if(routerStack2.size()>1) {
+						route.setDestination(routerStack2.get(new Random().nextInt(routerStack2.size()-1)));
+					} else {
+						route.setDestination(routerStack2.get(0));
+					}
+					routeList.add(route);
+				}
+				
+				d.addRoutable(d.getResourceManager());
+				nt.addRoutable(d.getResourceManager());
+				
+				{
+					Route route = new Route();
+					route.setOrigin(d.getResourceManager());
+					route.setDestination(nt.getDomainList().get(new Random().nextInt(nt.getDomainList().size()-1)).getResourceManager());
+					routeList.add(route);
 				}
 
 			}
@@ -133,7 +182,7 @@ public class NetworkTopology {
 	/**
 	 * A list of <code>Routable</code> objects that are in this <code>NetworkTopology</code>.
 	 */
-	private ArrayList<Routable> routableList;
+	private ArrayList<Routable> routableList = new ArrayList<>();
 	/**
 	 * A table showing associations between <code>Routable</code> objects and the <code>Domain</code> objects they are contained within. 
 	 */
