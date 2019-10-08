@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.Stack;
 
 import graph.NetworkToGraphConverter;
+import network.Domain;
 import network.NetworkTopology;
 import network.Route;
 import network.Router;
@@ -16,9 +17,16 @@ public class Playground {
 		NetworkTopology nt = new NetworkTopology.Builder().build();
 		Stack<Router> routers = new Stack<>();
 		ArrayList<Route> routes = new ArrayList<>();
+		ArrayList<Domain> domains = new ArrayList<>();
 		
+		for(int i = 0; i<5; i++) {
+			domains.add(new Domain());
+		}
+		nt.setDomainList(domains);
 		for(int i = 0; i<2000; i++) {
-			routers.add(new Router());
+			Router router = new Router();
+			router.setDomain(domains.get(new Random().nextInt(5)));
+			routers.add(router);
 		}
 		nt.setRoutableList(new ArrayList<>(routers));
 		while(routers.size()>2) {
