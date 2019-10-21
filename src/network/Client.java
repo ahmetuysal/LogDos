@@ -1,11 +1,16 @@
 package network;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import exception.CouldNotSetRouteListException;
 
 public class Client extends Routable {
 
+	public Client(UUID uuid) {
+		super();
+	}
+	
 	public Client() {
 		super();
 	}

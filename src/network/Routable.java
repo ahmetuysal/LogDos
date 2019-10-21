@@ -39,7 +39,11 @@ public abstract class Routable {
 	public Routable() {
 		this.uuid = UUID.randomUUID();
 	}
-
+	
+	public Routable(UUID uuid) {
+		this.uuid = uuid;
+	}
+	
 	/**
 	 * @return the <code>Domain</code> of this <code>Routable</code>
 	 */

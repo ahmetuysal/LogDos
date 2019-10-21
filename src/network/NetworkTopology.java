@@ -167,9 +167,14 @@ public class NetworkTopology {
 
 	}
 	
-	private NetworkTopology() {
+/*	private NetworkTopology() {
 		
+	}*/
+	
+	public NetworkTopology() {
+		super();
 	}
+	
 
 	/**
 	 * A list of <code>Domain</code> objects that are in this <code>NetworkTopology</code>.
