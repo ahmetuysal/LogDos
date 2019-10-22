@@ -1,5 +1,6 @@
 package network;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 /**
@@ -14,6 +15,29 @@ public class Route {
 	 * Universal unique identifier of this <code>Route</code>.
 	 */
 	private UUID pid;
+	
+	
+	//TODO: Review and fix below.
+	/**
+	 * @return the pid
+	 */
+	public UUID getPid() {
+		return this.pid;
+	}
+	/**
+	 * @param pid the pid to set
+	 */
+	public void setPid(UUID pid) {
+		this.pid = pid;
+	}
+	public Route() {
+		this.pid = UUID.randomUUID();
+	}
+	
+	public Route(Routable _origin, Routable _destination) {
+		this.origin = _origin;
+		this.destination = _destination;
+	}
 	
 	/**
 	 * <code>{@link Routable}</code> object that is the origin of this <code>Route</code>.
@@ -63,5 +87,6 @@ public class Route {
 	public void setThroughput(double _throughput) {
 		this.throughput = _throughput;
 	}
+	
 	
 }
