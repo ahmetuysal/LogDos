@@ -7,7 +7,7 @@ public class Playground {
 
 	public static void main(String[] args) {
 		//Playground method for quick testing.
-		NetworkTopology nt = new NetworkTopology.Builder().domainCount(10).build();
+		NetworkTopology nt = new NetworkTopology.Builder().domainCount(10).routableCount(400).setClientRatio(0.4).build();
 		NetworkToGraphConverter.convertNetwork(nt).display();
 		/*
 		Stack<Router> routers = new Stack<>();
@@ -39,8 +39,8 @@ public class Playground {
 			route.setOrigin(origin);
 			route.setDestination(dest);
 			nt.addRoute(route);
-		}*/
-		NetworkToGraphConverter.convertNetwork(nt).display();
+		}
+		NetworkToGraphConverter.convertNetwork(nt).display();*/
 	}
 	
 }
