@@ -34,6 +34,10 @@ public class Route {
 		this.pid = UUID.randomUUID();
 	}
 	
+	public Route(Routable _origin, Routable _destination) {
+		this.origin = _origin;
+		this.destination = _destination;
+	}
 	
 	/**
 	 * <code>{@link Routable}</code> object that is the origin of this <code>Route</code>.

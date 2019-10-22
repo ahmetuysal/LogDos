@@ -28,6 +28,10 @@ public class ResourceManager extends Routable {
 		this.registrationTable = new HashMap<>();
 	}
 
+	public ResourceManager(UUID uuid) {
+		super();
+		this.registrationTable = new HashMap<>();
+	}
 
 	/**
 	 * Registers a new <code>Service</code> to the registration table of this <code>ResourceManager</code>

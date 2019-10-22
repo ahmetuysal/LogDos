@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Stack;
+import java.util.UUID;
 
 /**
  * An object that represents a network topology.
@@ -206,9 +207,14 @@ public class NetworkTopology {
 
 	}
 	
-	private NetworkTopology() {
+/*	private NetworkTopology() {
 		
+	}*/
+	
+	public NetworkTopology() {
+		super();
 	}
+	
 
 	/**
 	 * A list of <code>Domain</code> objects that are in this <code>NetworkTopology</code>.
@@ -347,6 +353,15 @@ public class NetworkTopology {
 	 */
 	public boolean removeDomainAssociation(Routable _routable) {
 		return this.domainAssociationTable.remove(_routable)!=null;
+	}
+	
+	public Routable getRoutablebyID(UUID uuid) {
+		for (Routable routable : this.getRoutableList()) {
+			if (routable.getUUID().equals(uuid)) {
+				return routable;
+			}
+		}
+		return null;
 	}
 	
 }
