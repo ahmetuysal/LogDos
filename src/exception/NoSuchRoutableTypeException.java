@@ -1,11 +1,11 @@
 package exception;
 
-public class CouldNotReadRoutableTypeException extends RuntimeException {
+public class NoSuchRoutableTypeException extends Exception {
 
 	/**
 	 * Exception constructor.
 	 */
-	public CouldNotReadRoutableTypeException(String s) {
+	public NoSuchRoutableTypeException(String s) {
 		super("Invalid Router type" + s + " in the data file. Router type can only take the values: r, c, rm");
 	}
 }

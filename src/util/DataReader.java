@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import exception.CouldNotReadRoutableTypeException;
+import exception.NoSuchRoutableTypeException;
 import network.Client;
 import network.Domain;
 import network.NetworkTopology;
@@ -21,7 +21,7 @@ import network.Router;
 
 public class DataReader {
 
-	public static NetworkTopology readNetworkTopologyFromFile(String fileName) throws CouldNotReadRoutableTypeException{
+	public static NetworkTopology readNetworkTopologyFromFile(String fileName) throws NoSuchRoutableTypeException {
 		NetworkTopology networkTopology = new NetworkTopology();
 		try {
 			BufferedReader bf = new BufferedReader(new FileReader(fileName));
@@ -43,7 +43,7 @@ public class DataReader {
 					} else if (l.split(" ")[1] == "c") {
 						r = new Client(UUID.fromString(l.split(" ")[0]));
 					} else {
-						throw new CouldNotReadRoutableTypeException(l.split(" ")[1]);
+						throw new NoSuchRoutableTypeException(l.split(" ")[1]);
 					}
 					routables.add(r);
 					r.setDomain(domains.get(i - 1));
@@ -63,6 +63,7 @@ public class DataReader {
 				}
 			}
 			networkTopology.setRouteList(routes);	
+			bf.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
