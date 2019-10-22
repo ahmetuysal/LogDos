@@ -6,7 +6,7 @@ public class Router extends Routable {
 	
 	//TODO Implement.
 	public Router(UUID uuid) {
-		super();
+		super(uuid);
 	}
 	
 	public Router() {

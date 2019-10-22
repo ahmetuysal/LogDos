@@ -8,7 +8,7 @@ import exception.CouldNotSetRouteListException;
 public class Client extends Routable {
 
 	public Client(UUID uuid) {
-		super();
+		super(uuid);
 	}
 	
 	public Client() {

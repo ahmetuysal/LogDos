@@ -195,6 +195,7 @@ public class NetworkTopology {
 					destination = (Routable)targetD.getRoutableList().get(new Random().nextInt(targetD.getRoutableList().size()));
 				} while (!(destination instanceof Router));
 				route.setDestination(destination);
+				System.out.println(origin.getUUID() + "|" + destination.getUUID());
 				routeList.add(route);
 				
 			}
@@ -358,9 +359,12 @@ public class NetworkTopology {
 	public Routable getRoutablebyID(UUID uuid) {
 		for (Routable routable : this.getRoutableList()) {
 			if (routable.getUUID().equals(uuid)) {
+				//System.out.println("Routable UUID " + routable.getUUID());
 				return routable;
+				
 			}
 		}
+		//System.out.println("UUID IS " + uuid);
 		return null;
 	}
 	

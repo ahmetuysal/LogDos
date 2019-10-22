@@ -1,14 +1,29 @@
 package test;
 
+import exception.NoSuchRoutableTypeException;
 import graph.NetworkToGraphConverter;
 import network.NetworkTopology;
+import util.DataBuilder;
+import util.DataReader;
 
 public class Playground {
 
 	public static void main(String[] args) {
 		//Playground method for quick testing.
-		NetworkTopology nt = new NetworkTopology.Builder().domainCount(10).routableCount(400).setClientRatio(0.4).build();
-		NetworkToGraphConverter.convertNetwork(nt).display();
+		
+		
+		
+		try {
+			// DataBuilder.writeNetworkTopology(nt);
+			NetworkTopology nt = DataReader.readNetworkTopologyFromFile("src/dataTexts/topology-2019-10-22T15:22:52.879086.txt");
+			NetworkToGraphConverter.convertNetwork(nt).display();
+		} catch (NoSuchRoutableTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		 }
+//		NetworkTopology nt = new NetworkTopology.Builder().domainCount(10).routableCount(400).setClientRatio(0.4).build();
+//		DataBuilder.writeNetworkTopology(nt);
+//		NetworkToGraphConverter.convertNetwork(nt).display();
 		/*
 		Stack<Router> routers = new Stack<>();
 		ArrayList<Route> routes = new ArrayList<>();

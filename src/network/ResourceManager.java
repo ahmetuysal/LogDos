@@ -29,7 +29,7 @@ public class ResourceManager extends Routable {
 	}
 
 	public ResourceManager(UUID uuid) {
-		super();
+		super(uuid);
 		this.registrationTable = new HashMap<>();
 	}
 

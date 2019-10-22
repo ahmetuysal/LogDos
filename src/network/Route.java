@@ -35,6 +35,7 @@ public class Route {
 	}
 	
 	public Route(Routable _origin, Routable _destination) {
+		this.pid = UUID.randomUUID();
 		this.origin = _origin;
 		this.destination = _destination;
 	}

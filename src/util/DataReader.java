@@ -37,10 +37,10 @@ public class DataReader {
 				for (int j = 0; j < domainNodeCounts.get(i); j++) {
 					l = bf.readLine();
 					Routable r;
-					if (l.split(" ")[1] == "r") {
+					if (l.split(" ")[1].equals("r")) {
 						r = new Router(UUID.fromString(l.split(" ")[0]));
-						
-					} else if (l.split(" ")[1] == "c") {
+
+					} else if (l.split(" ")[1].equals("c")) {
 						r = new Client(UUID.fromString(l.split(" ")[0]));
 					} else {
 						throw new NoSuchRoutableTypeException(l.split(" ")[1]);
@@ -54,15 +54,14 @@ public class DataReader {
 			networkTopology.setRoutableList(routables);
 			// Create routes and and add them to domains
 			ArrayList<Route> routes = new ArrayList<>();
-			for (int i = 1; i < domainNodeCounts.size(); i++) {
-				for (int j = 0; j < domainNodeCounts.get(i); j++) {
-					l = bf.readLine();
-					Routable src = networkTopology.getRoutablebyID(UUID.fromString(l.split(" ")[0]));
-					Routable dest = networkTopology.getRoutablebyID(UUID.fromString(l.split(" ")[1]));
-					routes.add(new Route(src, dest));
-				}
-			}
-			networkTopology.setRouteList(routes);	
+			l = bf.readLine();
+			do {
+				Routable src = networkTopology.getRoutablebyID(UUID.fromString(l.split(" ")[0]));
+				Routable dest = networkTopology.getRoutablebyID(UUID.fromString(l.split(" ")[1]));
+				routes.add(new Route(src, dest));
+				l = bf.readLine();
+			} while (l != null);
+			networkTopology.setRouteList(routes);
 			bf.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

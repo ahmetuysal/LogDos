@@ -15,9 +15,9 @@ import network.Router;
 
 public class DataBuilder {
 	
-	public void dataBuilder(NetworkTopology networkTopology) {
+	public static void writeNetworkTopology(NetworkTopology networkTopology) {
 		try {
-			BufferedWriter bf = new BufferedWriter(new FileWriter("topology-" + LocalDateTime.now() + ".txt"));
+			BufferedWriter bf = new BufferedWriter(new FileWriter("src/dataTexts/topology-" + LocalDateTime.now() + ".txt"));
 			String domainLine = "" + networkTopology.getDomainList().size();
 			for (Domain d : networkTopology.getDomainList()) {
 				domainLine += " " + d.getRoutableList().size();
@@ -35,11 +35,11 @@ public class DataBuilder {
 		} catch (IOException | NoSuchRoutableTypeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		};
+		}
 		
 	}
 	
-	public String convertRoutableTypeToString(Routable r) throws NoSuchRoutableTypeException{
+	public static String convertRoutableTypeToString(Routable r) throws NoSuchRoutableTypeException{
 		if(r instanceof Router) {
 			return "r";
 		} else if (r instanceof Client) {
