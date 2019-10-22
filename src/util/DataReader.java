@@ -37,8 +37,6 @@ public class DataReader {
 						r = new Router(UUID.fromString(l.split(" ")[0]));
 					} else if (l.split(" ")[1] == "c") {
 						r = new Client(UUID.fromString(l.split(" ")[0]));
-					} else if (l.split(" ")[1] == "rm") {
-						r = new ResourceManager(UUID.fromString(l.split(" ")[0]));
 					} else {
 						throw new CouldNotReadRoutableTypeException(l.split(" ")[1]);
 					}
