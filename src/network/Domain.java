@@ -1,6 +1,7 @@
 package network;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Domain extends Routable {
 	
@@ -62,5 +63,14 @@ public class Domain extends Routable {
 	private void createResourceManager() {
 		this.resourceManager = new ResourceManager();
 		this.resourceManager.setDomain(this);
+	}
+	
+	public Routable getRoutablebyID(UUID uuid) {
+		for (Routable routable : this.getRoutableList()) {
+			if (routable.getUUID().equals(uuid)) {
+				return routable;
+			}
+		}
+		return null;
 	}
 }
