@@ -17,7 +17,7 @@ public class ResourceManager extends Routable {
 	 * are mapped to <code>HashSet</code> objects of <code>UUID</code> instances
 	 * representing <code>Routable</code> objects.
 	 */
-	private HashMap<UUID, HashSet<UUID>> registrationTable;
+	private HashMap<UUID, HashSet<Integer>> registrationTable;
 	
 	
 	/**
@@ -28,8 +28,8 @@ public class ResourceManager extends Routable {
 		this.registrationTable = new HashMap<>();
 	}
 
-	public ResourceManager(UUID uuid) {
-		super(uuid);
+	public ResourceManager(int id) {
+		super(id);
 		this.registrationTable = new HashMap<>();
 	}
 
@@ -39,12 +39,13 @@ public class ResourceManager extends Routable {
 	 * @param _routable <code>Routable</code> of this <code>ResourceManager</code>
 	 */
 	public void registerService(Service _service, Routable _routable) {
-	    HashSet<UUID> routableSet = this.registrationTable.get(_service.getSid()) ;
+	    HashSet<Integer> routableSet = this.registrationTable.get(_service.getSid()) ;
 		if(routableSet != null) {
-			routableSet.add(_routable.getUUID());
+			routableSet.add(_routable.getId());
 		} else {
-			routableSet = new HashSet<UUID>();
-			routableSet.add(_routable.getUUID());
+			routableSet = new HashSet<Integer>();
+			routableSet.add(_routable.getId());
+			this.registrationTable.put(_service.getSid(), routableSet);
 		}
 	}
 

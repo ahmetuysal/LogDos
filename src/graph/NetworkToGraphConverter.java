@@ -25,18 +25,18 @@ public class NetworkToGraphConverter {
 			Random obj = new Random();
 			int rand_num = obj.nextInt(0xffffff + 1);
 			String colorCode = String.format("#%06x", rand_num);
-			css += "node.class"+((Routable) domain).getUUID().toString().replace("-", "")+" {fill-color: "+ colorCode +";}\n";
+			css += "node.class"+(((Routable) domain).getId() + "").replace("-", "")+" {fill-color: "+ colorCode +";}\n";
 		}
 		graph.addAttribute("ui.stylesheet", css);
 		_network.getRoutableList().forEach(router -> {
 			System.out.println(router);
 			System.out.println(router.getClass().getName());
-			graph.addNode(((Routable) router).getUUID().toString()).addAttribute("ui.class", router.getClass().getName().replace(".", "") +", class"+((Routable) router).getDomain().getUUID().toString().replace("-", ""));
+			graph.addNode(((Routable) router).getId() + "").addAttribute("ui.class", router.getClass().getName().replace(".", "") +", class"+((Routable) router).getDomain().getId());
 		});
 		_network.getRouteList().forEach(route -> {
 			//graph.addNode(((Route) route).getOrigin().getUUID().toString());
 			//graph.addNode(((Route) route).getDestination().getUUID().toString());
-			graph.addEdge(((Route) route).getPid().toString(), ((Route) route).getOrigin().getUUID().toString(), ((Route) route).getDestination().getUUID().toString());
+			graph.addEdge(((Route) route).getPid().toString(), ((Route) route).getOrigin().getId() + "", ((Route) route).getDestination().getId() + "");
 		});
 		return graph;
 	}

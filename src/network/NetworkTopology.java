@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Stack;
-import java.util.UUID;
 
 /**
  * An object that represents a network topology.
  * 
- * @author Kaan Yıldırım @kyildirim
- * @see NetworkTopologyManager
+ * @author Kaan Yıldırım @kyildirim, Ahmet Uysal @ahmetuysal, Ceren Kocaogullar @ckocaogullar15
  */
 public class NetworkTopology {
 	
@@ -195,7 +193,7 @@ public class NetworkTopology {
 					destination = (Routable)targetD.getRoutableList().get(new Random().nextInt(targetD.getRoutableList().size()));
 				} while (!(destination instanceof Router));
 				route.setDestination(destination);
-				System.out.println(origin.getUUID() + "|" + destination.getUUID());
+				System.out.println(origin.getId() + "|" + destination.getId());
 				routeList.add(route);
 				
 			}
@@ -356,15 +354,13 @@ public class NetworkTopology {
 		return this.domainAssociationTable.remove(_routable)!=null;
 	}
 	
-	public Routable getRoutablebyID(UUID uuid) {
+	public Routable getRoutableById(int id) {
 		for (Routable routable : this.getRoutableList()) {
-			if (routable.getUUID().equals(uuid)) {
-				//System.out.println("Routable UUID " + routable.getUUID());
+			if (routable.getId() == id) {
 				return routable;
 				
 			}
 		}
-		//System.out.println("UUID IS " + uuid);
 		return null;
 	}
 	

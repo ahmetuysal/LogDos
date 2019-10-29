@@ -15,16 +15,16 @@ import java.util.UUID;
 public abstract class Routable {
 
 	/**
-	 * Universal unique identifier of this <code>Routable</code>.
+	 * Identifier of this <code>Routable</code>.
 	 */
-	private UUID uuid;
+	private int id;
 	
 	
 	/**
-	 * @return the <code>UUID</code> of this <code>Routable</code>
+	 * @return the <code>id</code> of this <code>Routable</code>
 	 */
-	public UUID getUUID() {
-		return this.uuid;
+	public int getId() {
+		return this.id;
 	}
 	/**
 	 * Domain of this <code>Routable</code>.
@@ -37,11 +37,12 @@ public abstract class Routable {
 	private ArrayList<Route> routeList = new ArrayList<>();
 	
 	public Routable() {
-		this.uuid = UUID.randomUUID();
+		// TODO: how to assure uniqueness
+		this.id = (int) (Math.random() * Integer.MAX_VALUE);
 	}
 	
-	public Routable(UUID uuid) {
-		this.uuid = uuid;
+	public Routable(int id) {
+		this.id = id;
 	}
 	
 	/**
@@ -52,7 +53,7 @@ public abstract class Routable {
 	}
 
 	/**
-	 * @param <code>Domain</code> of this <code>Routable</code>
+	 * @param domain the <code>Domain</code> of this <code>Routable</code>
 	 */
 	public void setDomain(Domain domain) {
 		this.domain = domain;

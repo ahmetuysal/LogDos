@@ -16,27 +16,26 @@ import network.Router;
 public class DataBuilder {
 	
 	public static void writeNetworkTopology(NetworkTopology networkTopology) {
-		try {
-			BufferedWriter bf = new BufferedWriter(new FileWriter("src/dataTexts/topology-" + LocalDateTime.now() + ".txt"));
-			String domainLine = "" + networkTopology.getDomainList().size();
-			for (Domain d : networkTopology.getDomainList()) {
-				domainLine += " " + d.getRoutableList().size();
-			}
-			bf.write(domainLine + "\n");
-			for (Domain d: networkTopology.getDomainList()) {
-				for (Routable r:  d.getRoutableList()) {
-					bf.write(r.getUUID().toString() + " " + convertRoutableTypeToString(r) + "\n");
-				}
-			}
-			for (Route r : networkTopology.getRouteList()) {
-				bf.write(r.getOrigin().getUUID().toString() +  " " + r.getDestination().getUUID().toString() + "\n");
-			}
-			bf.close();
-		} catch (IOException | NoSuchRoutableTypeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+//		try {
+//			BufferedWriter bf = new BufferedWriter(new FileWriter("src/dataTexts/topology-" + LocalDateTime.now() + ".txt"));
+//			String domainLine = "" + networkTopology.getDomainList().size();
+//			for (Domain d : networkTopology.getDomainList()) {
+//				domainLine += " " + d.getRoutableList().size();
+//			}
+//			bf.write(domainLine + "\n");
+//			for (Domain d: networkTopology.getDomainList()) {
+//				for (Routable r:  d.getRoutableList()) {
+//					bf.write(r.getUUID().toString() + " " + convertRoutableTypeToString(r) + "\n");
+//				}
+//			}
+//			for (Route r : networkTopology.getRouteList()) {
+//				bf.write(r.getOrigin().getUUID().toString() +  " " + r.getDestination().getUUID().toString() + "\n");
+//			}
+//			bf.close();
+//		} catch (IOException | NoSuchRoutableTypeException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	public static String convertRoutableTypeToString(Routable r) throws NoSuchRoutableTypeException{
