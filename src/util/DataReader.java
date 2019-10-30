@@ -11,17 +11,66 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import exception.NoSuchRoutableTypeException;
-import network.Client;
-import network.Domain;
-import network.NetworkTopology;
-import network.Routable;
-import network.Route;
-import network.Router;
+import network.*;
 
 public class DataReader {
 
-	public static NetworkTopology readNetworkTopologyFromFile(String fileName) throws NoSuchRoutableTypeException {
-		NetworkTopology networkTopology = new NetworkTopology();
+    public static AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName) {
+        AutonomousSystemTopology autonomousSystemTopology = new AutonomousSystemTopology();
+        try {
+            BufferedReader bf = new BufferedReader(new FileReader(topologyFileName));
+            String line = bf.readLine();
+            while (line != null) {
+                String[] ASIds = line.split(" ");
+                int ASId1 = Integer.parseInt(ASIds[0]);
+                int ASId2 = Integer.parseInt(ASIds[1]);
+
+                if (!autonomousSystemTopology.hasAutonomousSystemById(ASId1)) {
+                    AutonomousSystem as1 = new AutonomousSystem(ASId1);
+                    autonomousSystemTopology.addAutonomousSystem(as1);
+                }
+
+                if (!autonomousSystemTopology.hasAutonomousSystemById(ASId2)) {
+                    AutonomousSystem as2 = new AutonomousSystem(ASId2);
+                    autonomousSystemTopology.addAutonomousSystem(as2);
+                }
+
+                AutonomousSystem as1 = autonomousSystemTopology.getAutonomousSystemById(ASId1);
+                AutonomousSystem as2 = autonomousSystemTopology.getAutonomousSystemById(ASId2);
+                Route route = new Route(as1, as2);
+
+                as1.addRoute(route);
+                as2.addRoute(route);
+                autonomousSystemTopology.addRoute(route);
+                line = bf.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            BufferedReader bf = new BufferedReader(new FileReader(transientAutonomousSystemsFileName));
+            String line = bf.readLine();
+            while (line != null) {
+                int asId = Integer.parseInt(line.trim());
+                AutonomousSystem transientAS = autonomousSystemTopology.getAutonomousSystemById(asId);
+                if (transientAS == null) {
+                    transientAS = new AutonomousSystem(asId, AutonomousSystemType.TRANSIENT);
+                    autonomousSystemTopology.addAutonomousSystem(transientAS);
+                } else {
+                    transientAS.setType(AutonomousSystemType.TRANSIENT);
+                }
+                line = bf.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return autonomousSystemTopology;
+    }
+
+    public static NetworkTopology readNetworkTopologyFromFile(String fileName) throws NoSuchRoutableTypeException {
+        NetworkTopology networkTopology = new NetworkTopology();
 //		try {
 //			BufferedReader bf = new BufferedReader(new FileReader(fileName));
 //			String l = bf.readLine();
@@ -69,7 +118,7 @@ public class DataReader {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		return networkTopology;
-	}
+        return networkTopology;
+    }
 
 }
