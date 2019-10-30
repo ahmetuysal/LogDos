@@ -88,6 +88,14 @@ public class Route {
 	public void setThroughput(double _throughput) {
 		this.throughput = _throughput;
 	}
-	
-	
+
+
+	@Override
+	public String toString() {
+		return "Route{" +
+				"pid=" + pid +
+				", originId=" + origin.getId() +
+				", destinationId=" + destination.getId() +
+				'}';
+	}
 }
