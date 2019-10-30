@@ -4,7 +4,9 @@ import java.util.*;
 
 public class AutonomousSystemTopology {
 
-    private HashMap<Integer, AutonomousSystem> autonomousSystemMap = new HashMap<>();
+	private HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths = new HashMap<>(); //Memoization for fast search.
+	
+    public HashMap<Integer, AutonomousSystem> autonomousSystemMap = new HashMap<>();
 
     private HashSet<Route> routeSet = new HashSet<>();
 
@@ -44,18 +46,41 @@ public class AutonomousSystemTopology {
 
        autonomousSystemQueue.add(startPoint);
 
+       boolean flag = false;
        while (!autonomousSystemQueue.isEmpty()) {
            AutonomousSystem currentSystem = autonomousSystemQueue.poll();
+           if(paths.containsKey(currentSystem) && paths.get(currentSystem).containsKey(targetAS)) {
+        	   visitedAS.addAll(paths.get(currentSystem).get(targetAS));
+        	   //System.out.println(visitedAS.toString());
+        	   flag = true;
+        	   break;
+           }
            visitedAS.add(currentSystem);
            if (currentSystem.equals(targetAS)) {
-               System.out.println(visitedAS.toString());
+               //System.out.println(visitedAS.toString());
+               flag=true;
                break;
            }
-           currentSystem.getConnectedAutonomousSystems().forEach(autonomousSystem -> {
-               if (visitedAS.contains(autonomousSystem)) return;
-               autonomousSystemQueue.add(autonomousSystem);
-           });
+           for(AutonomousSystem autonomousSystem : (Set<AutonomousSystem>)currentSystem.getConnectedAutonomousSystems()) {
+        	   if (visitedAS.contains(autonomousSystem)) continue;
+               autonomousSystemQueue.add((AutonomousSystem)autonomousSystem);
+           }
        }
+       if(flag) {
+    	   visitedAS = visitedAS.subList(1, visitedAS.size());
+    	   while(!visitedAS.isEmpty()) {
+    		   if(paths.containsKey(startPoint)) {
+    			   if(!paths.get(startPoint).containsKey(targetAS)) {
+    				   paths.get(startPoint).put(targetAS, visitedAS);
+    			   }
+    		   } else {
+    			   paths.put(startPoint, new HashMap<AutonomousSystem, List<AutonomousSystem>>());
+    			   paths.get(startPoint).put(targetAS, visitedAS);
+    		   }
+    		   visitedAS = visitedAS.subList(1, visitedAS.size());
+    	   }
+       }
+       
 
        return null;
     }
