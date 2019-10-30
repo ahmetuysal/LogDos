@@ -1,8 +1,6 @@
 package network;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class AutonomousSystemTopology {
 
@@ -36,6 +34,30 @@ public class AutonomousSystemTopology {
 
     public boolean removeAutonomousSystem(AutonomousSystem _autonomousSystem) {
         return this.autonomousSystemMap.remove(_autonomousSystem.getId(), _autonomousSystem);
+    }
+
+    public List<Route> findPathBetweenAutonomousSystemsBFS(int as1Id, int as2Id) {
+       AutonomousSystem startPoint =  this.getAutonomousSystemById(as1Id);
+       AutonomousSystem targetAS = this.getAutonomousSystemById(as2Id);
+       List<AutonomousSystem> visitedAS = new ArrayList<>();
+       Queue<AutonomousSystem> autonomousSystemQueue = new ArrayDeque<>();
+
+       autonomousSystemQueue.add(startPoint);
+
+       while (!autonomousSystemQueue.isEmpty()) {
+           AutonomousSystem currentSystem = autonomousSystemQueue.poll();
+           visitedAS.add(currentSystem);
+           if (currentSystem.equals(targetAS)) {
+               System.out.println(visitedAS.toString());
+               break;
+           }
+           currentSystem.getConnectedAutonomousSystems().forEach(autonomousSystem -> {
+               if (visitedAS.contains(autonomousSystem)) return;
+               autonomousSystemQueue.add(autonomousSystem);
+           });
+       }
+
+       return null;
     }
 
 

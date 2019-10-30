@@ -47,4 +47,11 @@ public class AutonomousSystem extends Routable {
         return connectedAutonomousSystems;
     }
 
+    @Override
+    public String toString() {
+        return "AutonomousSystem{" +
+                "id=" + this.getId() +
+                ", type=" + type +
+                '}';
+    }
 }
