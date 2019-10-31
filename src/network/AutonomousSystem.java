@@ -47,6 +47,17 @@ public class AutonomousSystem extends Routable {
         return connectedAutonomousSystems;
     }
 
+    public Route getRouteToAutonomousSystem(AutonomousSystem autonomousSystem) {
+        for (Route route : this.routes) {
+            if (route.getOrigin().getId() == autonomousSystem.getId() || route.getDestination().getId() == autonomousSystem.getId()) {
+                return route;
+            }
+        }
+
+        System.out.println(getId() + " " + autonomousSystem.getId() + " " + autonomousSystem.getConnectedAutonomousSystems().contains(this));
+        return null;
+    }
+
     @Override
     public String toString() {
         return "AutonomousSystem{" +
