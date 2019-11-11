@@ -38,7 +38,7 @@ public class AutonomousSystemTopology {
         return this.autonomousSystemMap.remove(_autonomousSystem.getId(), _autonomousSystem);
     }
 
-    public List<Route> findPathBetweenAutonomousSystemsBFS(int as1Id, int as2Id) {
+    public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS(int as1Id, int as2Id) {
         AutonomousSystem startPoint = this.getAutonomousSystemById(as1Id);
         AutonomousSystem targetAS = this.getAutonomousSystemById(as2Id);
 
@@ -76,6 +76,8 @@ public class AutonomousSystemTopology {
 
         if (didFindPath) {
             System.out.println(visitedAS.toString());
+            List<AutonomousSystem> result = new ArrayList<AutonomousSystem>();
+            result.addAll(visitedAS);
             visitedAS.remove(0);
             while (!visitedAS.isEmpty()) {
                 if (paths.containsKey(startPoint)) {
@@ -88,6 +90,7 @@ public class AutonomousSystemTopology {
                 }
                 visitedAS.remove(0);
             }
+            return result;
         }
 
         return null;

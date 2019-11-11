@@ -21,13 +21,22 @@ public class Playground {
 		List<Integer> availableNodes = new ArrayList<Integer>(ast.autonomousSystemMap.keySet());
 		Random rg = new Random();
 		int range = availableNodes.size();
-		for(int i = 0; i<2000; i++) {
+		long startTime = System.currentTimeMillis();
+		double attack = 3000000; //3Gbps in kbps
+		double reachingAttack = 0;
+		for(int i = 0; i<10; i++) {
 			int start = availableNodes.get(rg.nextInt(range));
 			int target = availableNodes.get(rg.nextInt(range));
 			System.out.println(start + "->" + target);
-			ast.findPathBetweenAutonomousSystemsBFS(start, target);
+			int lenght = ast.findPathBetweenAutonomousSystemsBFS(start, target).size();
+			System.out.println("Distance: "+lenght);
+			reachingAttack += (attack * Math.pow(0.05, lenght));
 			System.out.println(i);
 		}
+		long endTime = System.currentTimeMillis(); 
+        System.out.println((endTime - startTime) / 1000 + "s");
+        System.out.println("Total Attack Rate = " + (attack * 10) + "kbps");
+        System.out.println("Reaching Attack Rate = " + reachingAttack + "kbps");
 		
 		/*
 		ExecutorService bfsPool = Executors.newFixedThreadPool(100);
