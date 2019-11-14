@@ -23,19 +23,21 @@ public class Playground {
 		int range = availableNodes.size();
 		long startTime = System.currentTimeMillis();
 		double attack = 3000000; //3Gbps in kbps
+		int numAttacker = 1000;
 		double reachingAttack = 0;
-		for(int i = 0; i<10; i++) {
+		for(int i = 0; i < numAttacker; i++) {
 			int start = availableNodes.get(rg.nextInt(range));
 			int target = availableNodes.get(rg.nextInt(range));
 			System.out.println(start + "->" + target);
-			int lenght = ast.findPathBetweenAutonomousSystemsBFS2(start, target).size();
-			System.out.println("Distance: "+lenght);
-			reachingAttack += (attack * Math.pow(0.05, lenght));
-			System.out.println(i);
+			var path = ast.findPathBetweenAutonomousSystemsBFS2(start, target);
+			int length =  path == null ? Integer.MAX_VALUE : path.size();
+			System.out.println("Distance: " + length);
+			reachingAttack += (attack * Math.pow(0.05, length));
+			// System.out.println(i);
 		}
 		long endTime = System.currentTimeMillis(); 
         System.out.println((endTime - startTime) / 1000 + "s");
-        System.out.println("Total Attack Rate = " + (attack * 10) + "kbps");
+        System.out.println("Total Attack Rate = " + (attack * numAttacker) + "kbps");
         System.out.println("Reaching Attack Rate = " + reachingAttack + "kbps");
 		
 		/*
