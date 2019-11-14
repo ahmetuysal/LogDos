@@ -96,6 +96,42 @@ public class AutonomousSystemTopology {
         return null;
     }
 
+    public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS2(int as1Id, int as2Id) {
+        AutonomousSystem startPoint = this.getAutonomousSystemById(as1Id);
+        AutonomousSystem targetAS = this.getAutonomousSystemById(as2Id);
+
+        HashMap<AutonomousSystem, AutonomousSystem> parentMap = new HashMap<>();
+        Queue<AutonomousSystem> queue = new ArrayDeque<>();
+        queue.add(startPoint);
+
+        while (!queue.isEmpty()) {
+            AutonomousSystem node = queue.remove();
+            if (node.equals(targetAS)) {
+                return backtracePath(parentMap, startPoint, node);
+            }
+            node.getConnectedAutonomousSystems().forEach(adjacentAutonomousSystem -> {
+                if (!parentMap.containsKey(adjacentAutonomousSystem)) {
+                    queue.add(adjacentAutonomousSystem);
+                    parentMap.put(adjacentAutonomousSystem, node);
+                }
+            });
+        }
+
+        return null;
+    }
+
+    private List<AutonomousSystem> backtracePath(HashMap<AutonomousSystem, AutonomousSystem> parentMap, AutonomousSystem start, AutonomousSystem end) {
+        AutonomousSystem current = end;
+        List<AutonomousSystem> path = new ArrayList<>();
+        path.add(current);
+        while (!current.equals(start)) {
+            current = parentMap.get(current);
+            path.add(current);
+        }
+
+        Collections.reverse(path);
+        return path;
+    }
 
     public boolean hasAutonomousSystemById(int _id) {
         return this.autonomousSystemMap.containsKey(_id);

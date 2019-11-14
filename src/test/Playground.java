@@ -28,7 +28,7 @@ public class Playground {
 			int start = availableNodes.get(rg.nextInt(range));
 			int target = availableNodes.get(rg.nextInt(range));
 			System.out.println(start + "->" + target);
-			int lenght = ast.findPathBetweenAutonomousSystemsBFS(start, target).size();
+			int lenght = ast.findPathBetweenAutonomousSystemsBFS2(start, target).size();
 			System.out.println("Distance: "+lenght);
 			reachingAttack += (attack * Math.pow(0.05, lenght));
 			System.out.println(i);
