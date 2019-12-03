@@ -4,6 +4,17 @@ import java.util.*;
 
 public class AutonomousSystemTopology {
 
+    private static AutonomousSystemTopology instance;
+
+    public static synchronized AutonomousSystemTopology getInstance() {
+        if (instance == null) {
+            instance = new AutonomousSystemTopology();
+        }
+        return  instance;
+    }
+
+    private AutonomousSystemTopology() {}
+
     private HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths = new HashMap<>(); //Memoization for fast search.
 
     public HashMap<Integer, AutonomousSystem> autonomousSystemMap = new HashMap<>();
@@ -39,64 +50,6 @@ public class AutonomousSystemTopology {
     }
 
     public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS(int as1Id, int as2Id) {
-        AutonomousSystem startPoint = this.getAutonomousSystemById(as1Id);
-        AutonomousSystem targetAS = this.getAutonomousSystemById(as2Id);
-
-        final List<AutonomousSystem> visitedAS = new ArrayList<>();
-        Queue<AutonomousSystem> autonomousSystemQueue = new ArrayDeque<>();
-        autonomousSystemQueue.add(startPoint);
-
-        Map<AutonomousSystem, AutonomousSystem> addedByWhom = new HashMap<>();
-
-        boolean didFindPath = false;
-
-        while (!autonomousSystemQueue.isEmpty()) {
-            AutonomousSystem currentSystem = autonomousSystemQueue.poll();
-
-            if (paths.containsKey(currentSystem) && paths.get(currentSystem).containsKey(targetAS)) {
-                visitedAS.addAll(paths.get(currentSystem).get(targetAS));
-                didFindPath = true;
-                break;
-            }
-
-            visitedAS.add(currentSystem);
-
-            if (currentSystem.equals(targetAS)) {
-                didFindPath = true;
-                break;
-            }
-
-            currentSystem.getConnectedAutonomousSystems().forEach(autonomousSystem -> {
-                if (!visitedAS.contains(autonomousSystem) && !autonomousSystemQueue.contains(autonomousSystem)) {
-                    autonomousSystemQueue.add(autonomousSystem);
-                    addedByWhom.put(autonomousSystem, currentSystem);
-                }
-            });
-        }
-
-        if (didFindPath) {
-            System.out.println(visitedAS.toString());
-            List<AutonomousSystem> result = new ArrayList<AutonomousSystem>();
-            result.addAll(visitedAS);
-            visitedAS.remove(0);
-            while (!visitedAS.isEmpty()) {
-                if (paths.containsKey(startPoint)) {
-                    if (!paths.get(startPoint).containsKey(targetAS)) {
-                        paths.get(startPoint).put(targetAS, visitedAS);
-                    }
-                } else {
-                    paths.put(startPoint, new HashMap<>());
-                    paths.get(startPoint).put(targetAS, visitedAS);
-                }
-                visitedAS.remove(0);
-            }
-            return result;
-        }
-
-        return null;
-    }
-
-    public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS2(int as1Id, int as2Id) {
         AutonomousSystem startPoint = this.getAutonomousSystemById(as1Id);
         AutonomousSystem targetAS = this.getAutonomousSystemById(as2Id);
 

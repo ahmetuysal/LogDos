@@ -16,7 +16,7 @@ import network.*;
 public class DataReader {
 
     public static AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName) {
-        AutonomousSystemTopology autonomousSystemTopology = new AutonomousSystemTopology();
+        AutonomousSystemTopology autonomousSystemTopology = AutonomousSystemTopology.getInstance();
         try {
             BufferedReader bf = new BufferedReader(new FileReader(topologyFileName));
             String line = bf.readLine();

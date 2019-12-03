@@ -91,4 +91,13 @@ public class Packet {
 		this.pidStack = _pidStack;
 	}
 
+
+	@Override
+	public String toString() {
+		return "Packet{" +
+				"sid=" + sid +
+				", sourceId=" + sourceId +
+				", pidStack=" + pidStack +
+				'}';
+	}
 }

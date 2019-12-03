@@ -17,10 +17,8 @@ public abstract class LoggingStrategy {
         }, 2000);
     }
 
-    abstract void logPacket(Packet packet);
+    public abstract void logPacket(Packet packet);
 
-    boolean checkPacket(Packet packet) {
-        return this.bloomFilter.mightContain(packet);
-    }
+    public abstract boolean checkPacket(Packet packet);
 
 }
