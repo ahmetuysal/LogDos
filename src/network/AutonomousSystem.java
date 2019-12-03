@@ -7,7 +7,6 @@ import java.util.Set;
 
 public class AutonomousSystem extends Routable {
 
-
     private List<Route> routes = new ArrayList<>();
     private Set<AutonomousSystem> connectedAutonomousSystems = new HashSet<>();
     private AutonomousSystemType type;
