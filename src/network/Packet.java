@@ -26,7 +26,7 @@ public class Packet {
 	 * Stack of <code>UUID</code> that represents <code>Route</code> objects that
 	 * this packet traveled through.
 	 */
-	private Stack<UUID> pidStack;
+	private Stack<Integer> pidStack;
 
 	/**
 	 * @param _sid      Universally unique identifier of the requested service.
@@ -36,7 +36,7 @@ public class Packet {
 	 *                  <code>Route</code> objects that this packet traveled
 	 *                  through.
 	 */
-	public Packet(UUID _sid, int _sourceId, Stack<UUID> _pidStack) {
+	public Packet(UUID _sid, int _sourceId, Stack<Integer> _pidStack) {
 		this.sid = _sid;
 		this.sourceId = _sourceId;
 		this.pidStack = _pidStack;
@@ -78,7 +78,7 @@ public class Packet {
 	 * @return Stack of <code>UUID</code> that represents <code>Route</code> objects
 	 *         that this packet traveled through.
 	 */
-	public Stack<UUID> getPidStack() {
+	public Stack<Integer> getPidStack() {
 		return this.pidStack;
 	}
 
@@ -87,7 +87,7 @@ public class Packet {
 	 *                  <code>Route</code> objects that this packet traveled through
 	 *                  to set.
 	 */
-	public void setPidStack(Stack<UUID> _pidStack) {
+	public void setPidStack(Stack<Integer> _pidStack) {
 		this.pidStack = _pidStack;
 	}
 
