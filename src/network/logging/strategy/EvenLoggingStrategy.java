@@ -14,8 +14,7 @@ public class EvenLoggingStrategy extends LoggingStrategy {
     public boolean checkPacket(Packet packet) {
         if (packet.getPidStack().size() % 2 == 0) {
             return super.bloomFilter.mightContain(packet);
-        }
-        else {
+        } else {
             return true;
         }
     }

@@ -2,7 +2,7 @@ package network.logging.strategy;
 
 import network.Packet;
 
-public class ComprehensiveLoggingStrategy extends  LoggingStrategy {
+public class ComprehensiveLoggingStrategy extends LoggingStrategy {
     @Override
     public void logPacket(Packet packet) {
         super.bloomFilter.put(packet);

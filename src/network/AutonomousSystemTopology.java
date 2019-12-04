@@ -5,21 +5,19 @@ import java.util.*;
 public class AutonomousSystemTopology {
 
     private static AutonomousSystemTopology instance;
+    public HashMap<Integer, AutonomousSystem> autonomousSystemMap = new HashMap<>();
+    private HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths = new HashMap<>(); //Memoization for fast search.
+    private HashSet<Route> routeSet = new HashSet<>();
+
+    private AutonomousSystemTopology() {
+    }
 
     public static synchronized AutonomousSystemTopology getInstance() {
         if (instance == null) {
             instance = new AutonomousSystemTopology();
         }
-        return  instance;
+        return instance;
     }
-
-    private AutonomousSystemTopology() {}
-
-    private HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths = new HashMap<>(); //Memoization for fast search.
-
-    public HashMap<Integer, AutonomousSystem> autonomousSystemMap = new HashMap<>();
-
-    private HashSet<Route> routeSet = new HashSet<>();
 
     /**
      * Adds a <code>Route</code> object to this <code>AutonomousSystemTopology<code>.
