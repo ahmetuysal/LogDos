@@ -47,18 +47,16 @@ public class AutonomousSystemTopology {
         return this.autonomousSystemMap.remove(_autonomousSystem.getId(), _autonomousSystem);
     }
 
-    public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS(int as1Id, int as2Id) {
-        AutonomousSystem startPoint = this.getAutonomousSystemById(as1Id);
-        AutonomousSystem targetAS = this.getAutonomousSystemById(as2Id);
 
+    public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS(AutonomousSystem as1, AutonomousSystem as2) {
         HashMap<AutonomousSystem, AutonomousSystem> parentMap = new HashMap<>();
         Queue<AutonomousSystem> queue = new ArrayDeque<>();
-        queue.add(startPoint);
+        queue.add(as1);
 
         while (!queue.isEmpty()) {
             AutonomousSystem node = queue.remove();
-            if (node.equals(targetAS)) {
-                return backtracePath(parentMap, startPoint, node);
+            if (node.equals(as2)) {
+                return backtracePath(parentMap, as1, node);
             }
             node.getConnectedAutonomousSystems().forEach(adjacentAutonomousSystem -> {
                 if (!parentMap.containsKey(adjacentAutonomousSystem)) {
@@ -69,6 +67,22 @@ public class AutonomousSystemTopology {
         }
 
         return null;
+    }
+
+    public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS(int as1Id, int as2Id) {
+        AutonomousSystem startPoint = this.getAutonomousSystemById(as1Id);
+        AutonomousSystem targetAS = this.getAutonomousSystemById(as2Id);
+        return findPathBetweenAutonomousSystemsBFS(startPoint, targetAS);
+    }
+
+    public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS(AutonomousSystem as1, int as2Id) {
+        AutonomousSystem targetAS = this.getAutonomousSystemById(as2Id);
+        return findPathBetweenAutonomousSystemsBFS(as1, targetAS);
+    }
+
+    public List<AutonomousSystem> findPathBetweenAutonomousSystemsBFS(int as1Id, AutonomousSystem as2) {
+        AutonomousSystem startPoint = this.getAutonomousSystemById(as1Id);
+        return findPathBetweenAutonomousSystemsBFS(startPoint, as2);
     }
 
     private List<AutonomousSystem> backtracePath(HashMap<AutonomousSystem, AutonomousSystem> parentMap, AutonomousSystem start, AutonomousSystem end) {
