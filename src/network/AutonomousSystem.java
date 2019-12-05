@@ -34,11 +34,9 @@ public class AutonomousSystem extends Routable {
     }
 
     public void sendInterestPacket(Packet packet, List<AutonomousSystem> path) {
-        System.out.println("Sending IP: " + packet.getPidStack().toString());
         if (path.isEmpty()) {
             sendResponsePacket(packet, true);
         } else {
-            System.out.println("Logging packet: " + packet.toString() + " at node " + this.getId());
             this.loggingStrategy.logPacket(packet);
             packet.getPidStack().add(this.getId());
             var nextAs = path.remove(0);
@@ -51,11 +49,7 @@ public class AutonomousSystem extends Routable {
     }
 
     public void sendResponsePacket(Packet packet, boolean firstTime) {
-        System.out.println("Sending RP: " + packet.getPidStack().toString());
-        if (packet.getPidStack().isEmpty()) {
-            System.out.println("Got response " + packet.toString() + " at node " + this.getId());
-        } else {
-            System.out.println("Checking packet: " + packet.toString() + " at node " + this.getId());
+        if (!packet.getPidStack().isEmpty()) {
             if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
                 System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
             } else {

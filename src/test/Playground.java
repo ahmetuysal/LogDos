@@ -4,6 +4,7 @@ import network.AutonomousSystem;
 import network.AutonomousSystemTopology;
 import network.Packet;
 import util.DataReader;
+import util.TickProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,37 +19,10 @@ public class Playground {
         System.out.println("Num routes: " + ast.getRouteSet().size());
         System.out.println("Num ASs: " + ast.getAutonomousSystems().size());
 
-
-        List<Integer> availableNodes = new ArrayList<Integer>(ast.autonomousSystemMap.keySet());
-        Random rg = new Random();
-        int range = availableNodes.size();
         long startTime = System.currentTimeMillis();
-        double[] totalAttacks = {1000000, 2000000, 3000000};
-        int[] numAttackers = {100, 500, 1000, 1500, 2000};
-        double[] falsePositiveRates = {0.0001D, 0.001D, 0.01D, 0.05D};
 
-        int start = availableNodes.get(rg.nextInt(range));
-        int target = availableNodes.get(rg.nextInt(range));
-        // System.out.println(start + "->" + target);
-        var path = ast.findPathBetweenAutonomousSystemsBFS(start, target);
-
-        System.out.println(path);
-
-        if (path != null) {
-            var startAS = path.remove(0);
-            if (rg.nextBoolean()) {
-                var packet = new Packet(UUID.randomUUID(), start, new Stack<>());
-                startAS.sendInterestPacket(packet, path);
-            } else {
-                var attackPath = new Stack<Integer>();
-                attackPath.addAll(path.stream().map(AutonomousSystem::getId).collect(Collectors.toList()));
-                var attackPacket = new Packet(UUID.randomUUID(), start, attackPath);
-                var lastAS = path.get(path.size() - 1);
-                lastAS.sendResponsePacket(attackPacket);
-            }
-        } else {
-            System.out.println("Cannot go to node " + target + " from node " + start);
-        }
+        simulateLegitimateTraffic(ast, 3000);
+        simulateAttackTraffic(ast, 1000);
 
 //		for (int numAttacker : numAttackers ) {
 //			for (double totalAttack : totalAttacks) {
@@ -110,5 +84,56 @@ public class Playground {
         // graph.display();
 
     }
+
+    private static void simulateLegitimateTraffic(AutonomousSystemTopology ast, int packetCount) {
+        List<Integer> availableNodes = new ArrayList<>(ast.autonomousSystemMap.keySet());
+        Random rg = new Random();
+        int range = availableNodes.size();
+
+        for (int i = 0; i < packetCount; i++) {
+            int start = availableNodes.get(rg.nextInt(range));
+            int target = availableNodes.get(rg.nextInt(range));
+
+            var path = ast.findPathBetweenAutonomousSystemsBFS(start, target);
+            if (path != null) {
+                var startAS = path.remove(0);
+                var packet = new Packet(UUID.randomUUID(), start, new Stack<>());
+                startAS.sendInterestPacket(packet, path);
+                int randomTickAmount = (int)(rg.nextDouble() * 2+ 0.1);
+                TickProvider.getInstance().tick(randomTickAmount);
+            } else {
+                i--;
+                System.out.println("Cannot go to node " + target + " from node " + start);
+            }
+        }
+    }
+
+
+    private static void simulateAttackTraffic(AutonomousSystemTopology ast, int packetCount) {
+        List<Integer> availableNodes = new ArrayList<>(ast.autonomousSystemMap.keySet());
+        Random rg = new Random();
+        int range = availableNodes.size();
+
+        for (int i = 0 ; i < packetCount; i++) {
+            int start = availableNodes.get(rg.nextInt(range));
+            int target = availableNodes.get(rg.nextInt(range));
+
+            var path = ast.findPathBetweenAutonomousSystemsBFS(start, target);
+            if (path != null) {
+                    var attackPath = new Stack<Integer>();
+                    attackPath.addAll(path.stream().map(AutonomousSystem::getId).collect(Collectors.toList()));
+                    var attackPacket = new Packet(UUID.randomUUID(), start, attackPath);
+                    var lastAS = path.get(path.size() - 1);
+                    lastAS.sendResponsePacket(attackPacket);
+                int randomTickAmount = (int)(rg.nextDouble() * 2+ 0.1);
+                TickProvider.getInstance().tick(randomTickAmount);
+            } else {
+                i--;
+                System.out.println("Cannot go to node " + target + " from node " + start);
+            }
+        }
+
+    }
+
 
 }
