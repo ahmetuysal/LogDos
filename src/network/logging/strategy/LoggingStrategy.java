@@ -11,9 +11,7 @@ public abstract class LoggingStrategy {
 
     public LoggingStrategy() {
         this.bloomFilter = BloomFilter.create((Funnel<Packet>) (packet, primitiveSink) -> {
-            primitiveSink.putInt(packet.getSourceId())
-                    .putUnencodedChars(packet.getSid().toString());
-
+            primitiveSink.putUnencodedChars(packet.getSid().toString());
             packet.getPidStack().forEach(integer -> primitiveSink.putInt(integer));
         }, NetworkConfigurationConstants.BLOOM_FILTER_EXPECTED_INSERTIONS, NetworkConfigurationConstants.BLOOM_FILTER_FALSE_POSITIVE_RATE);
     }

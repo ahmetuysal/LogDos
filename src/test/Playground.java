@@ -2,6 +2,7 @@ package test;
 
 import network.AutonomousSystem;
 import network.AutonomousSystemTopology;
+import network.AutonomousSystemType;
 import network.Packet;
 import util.DataReader;
 import util.TickProvider;
@@ -30,9 +31,9 @@ public class Playground {
 
         long startTime = System.currentTimeMillis();
 
-        var victim = selectRandomASFromTopology(ast);
+        var victim = selectRandomNonTransientASFromTopology(ast);
 
-        simulateLegitimateTrafficToAS(ast, victim, 1000, 10000);
+        simulateLegitimateTrafficToAS(ast, victim, 2000, 50000);
         simulateAttackTrafficToAS(ast, victim, 20, 5000);
 
         long endTime = System.currentTimeMillis();
@@ -58,6 +59,23 @@ public class Playground {
         return null;
     }
 
+    private static AutonomousSystem selectRandomNonTransientASFromTopology(AutonomousSystemTopology ast) {
+        Random rand = new Random();
+        Map.Entry<Integer, AutonomousSystem>[] entries = new Map.Entry[0];
+        try {
+            entries = (Map.Entry<Integer, AutonomousSystem>[]) _table.get(ast.autonomousSystemMap);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        int start = rand.nextInt(entries.length);
+        for (int i = 0; i < entries.length; i++) {
+            int idx = (start + i) % entries.length;
+            Map.Entry<Integer, AutonomousSystem> entry = entries[idx];
+            if (entry != null && entry.getValue().getType() != AutonomousSystemType.TRANSIENT) return entry.getValue();
+        }
+        return null;
+    }
+
     private static void simulateLegitimateTrafficToAS(AutonomousSystemTopology ast, AutonomousSystem target,
                                                       int peerCount, int packetPerPeer) {
         Random rg = new Random();
@@ -68,14 +86,14 @@ public class Playground {
             if (path != null) {
                 var startAS = path.remove(0);
                 for (int j = 0; j < packetPerPeer; j++) {
-                    var packet = new Packet(UUID.randomUUID(), start.getId(), new Stack<>());
+                    var packet = new Packet(UUID.randomUUID(), new Stack<>());
+                    packet.getPidStack().add(startAS.getId());
                     startAS.sendInterestPacket(packet, path);
                     int randomTickAmount = (int) (rg.nextDouble() * 2 + 0.1);
                     TickProvider.getInstance().tick(randomTickAmount);
                 }
             } else {
                 i--;
-                System.out.println("Cannot go to node " + target + " from node " + start);
             }
         }
     }
@@ -86,22 +104,25 @@ public class Playground {
         Random rg = new Random();
 
         for (int i = 0; i < attackerCount; i++) {
-            AutonomousSystem start = selectRandomASFromTopology(ast);
+            AutonomousSystem start = selectRandomNonTransientASFromTopology(ast);
 
             var path = ast.findPathBetweenAutonomousSystemsBFS(start, target);
             if (path != null) {
+                // System.out.println("Attacker: " + start.toString() + ", victim: " + target.toString() +", path: "+ path.toString());
+                var attacker = path.remove(0);
+                Collections.reverse(path);
                 var attackPath = new Stack<Integer>();
                 attackPath.addAll(path.stream().map(AutonomousSystem::getId).collect(Collectors.toList()));
+                System.out.println("Neighbor approx element:" + attacker.getConnectedAutonomousSystems().iterator().next().loggingStrategy.bloomFilter.approximateElementCount());
+                System.out.println("Path size " + attackPath.size());
                 for (int j = 0; j < packetPerAttacker; j++) {
-                    var attackPacket = new Packet(UUID.randomUUID(), start.getId(), attackPath);
-                    var lastAS = path.get(path.size() - 1);
-                    lastAS.sendResponsePacket(attackPacket);
+                    var attackPacket = new Packet(UUID.randomUUID(), attackPath);
+                    attacker.sendResponsePacket(attackPacket, true);
                     int randomTickAmount = (int) (rg.nextDouble() * 2 + 0.1);
                     TickProvider.getInstance().tick(randomTickAmount);
                 }
             } else {
                 i--;
-                System.out.println("Cannot go to node " + target + " from node " + start);
             }
         }
 
