@@ -2,6 +2,7 @@ package network.logging.strategy;
 
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
+import network.NetworkConfigurationConstants;
 import network.Packet;
 
 public abstract class LoggingStrategy {
@@ -14,7 +15,7 @@ public abstract class LoggingStrategy {
                     .putUnencodedChars(packet.getSid().toString());
 
             packet.getPidStack().forEach(integer -> primitiveSink.putInt(integer));
-        }, 2000);
+        }, NetworkConfigurationConstants.BLOOM_FILTER_EXPECTED_INSERTIONS, NetworkConfigurationConstants.BLOOM_FILTER_FALSE_POSITIVE_RATE);
     }
 
     public abstract void logPacket(Packet packet);

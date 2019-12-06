@@ -32,12 +32,12 @@ public class Playground {
 
         var victim = selectRandomASFromTopology(ast);
 
-        simulateLegitimateTrafficToAS(ast, victim, 100, 1000);
-        simulateAttackTrafficToAS(ast, victim, 20, 500);
+        simulateLegitimateTrafficToAS(ast, victim, 1000, 10000);
+        simulateAttackTrafficToAS(ast, victim, 20, 5000);
 
         long endTime = System.currentTimeMillis();
+        System.out.println("Packages caught: " + AutonomousSystem.packagesCaught);
         System.out.println((endTime - startTime) / 1000 + "s");
-
     }
 
 

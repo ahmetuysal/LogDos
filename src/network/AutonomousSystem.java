@@ -14,6 +14,7 @@ public class AutonomousSystem extends Routable {
     private Set<AutonomousSystem> connectedAutonomousSystems = new HashSet<>();
     private AutonomousSystemType type;
     private LoggingStrategy loggingStrategy;
+    public static int packagesCaught = 0;
 
     public AutonomousSystem(int id) {
         super(id);
@@ -51,6 +52,7 @@ public class AutonomousSystem extends Routable {
     public void sendResponsePacket(Packet packet, boolean firstTime) {
         if (!packet.getPidStack().isEmpty()) {
             if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
+                AutonomousSystem.packagesCaught++;
                 System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
             } else {
                 var nextASId = packet.getPidStack().pop();
