@@ -80,6 +80,10 @@ public class AutonomousSystem extends Routable {
         }
     }
 
+    public void logPacket(Packet packet) {
+        this.loggingStrategy.logPacket(packet);
+    }
+
     public List<Route> getRoutes() {
         return routes;
     }

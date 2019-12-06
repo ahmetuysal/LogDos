@@ -33,8 +33,8 @@ public class Playground {
 
         var victim = selectRandomNonTransientASFromTopology(ast);
 
-        simulateLegitimateTrafficToAS(ast, victim, 2000, 50000);
-        simulateAttackTrafficToAS(ast, victim, 20, 5000);
+        fillBloomFiltersWithRandomPackets(ast, 100);
+        simulateAttackTrafficToAS(ast, victim, 100, 100000);
 
         long endTime = System.currentTimeMillis();
         System.out.println("Packages caught: " + AutonomousSystem.packagesCaught);
@@ -76,6 +76,14 @@ public class Playground {
         return null;
     }
 
+    private static void fillBloomFiltersWithRandomPackets(AutonomousSystemTopology ast, int packetPerFilter) {
+        for (AutonomousSystem as : ast.getAutonomousSystems()) {
+            for (int i = 0; i < packetPerFilter; i++) {
+                as.logPacket(new Packet(UUID.randomUUID(), new Stack<>()));
+            }
+        }
+    }
+
     private static void simulateLegitimateTrafficToAS(AutonomousSystemTopology ast, AutonomousSystem target,
                                                       int peerCount, int packetPerPeer) {
         Random rg = new Random();
@@ -113,7 +121,6 @@ public class Playground {
                 Collections.reverse(path);
                 var attackPath = new Stack<Integer>();
                 attackPath.addAll(path.stream().map(AutonomousSystem::getId).collect(Collectors.toList()));
-                System.out.println("Neighbor approx element:" + attacker.getConnectedAutonomousSystems().iterator().next().loggingStrategy.bloomFilter.approximateElementCount());
                 System.out.println("Path size " + attackPath.size());
                 for (int j = 0; j < packetPerAttacker; j++) {
                     var attackPacket = new Packet(UUID.randomUUID(), attackPath);
