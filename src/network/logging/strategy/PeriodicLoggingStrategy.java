@@ -4,18 +4,16 @@ import network.NetworkConfigurationConstants;
 import network.Packet;
 import util.TickProvider;
 
-import java.util.Random;
-
 public class PeriodicLoggingStrategy extends LoggingStrategy {
 
-    private int loggingInterval;
-    private int initialTime;
-    private int attackOccurrencesDuringInterval;
+    int loggingInterval;
+    int initialTime;
+    int attackOccurrencesDuringInterval;
+
 
     public PeriodicLoggingStrategy() {
         super();
-        this.initialTime = TickProvider.getInstance().getCurrentTick() - (NetworkConfigurationConstants.INITIAL_LOGGING_INTERVAL / 2)
-                + new Random().nextInt(NetworkConfigurationConstants.INITIAL_LOGGING_INTERVAL);
+        this.initialTime = TickProvider.getInstance().getCurrentTick();
         this.loggingInterval = NetworkConfigurationConstants.INITIAL_LOGGING_INTERVAL;
         this.attackOccurrencesDuringInterval = 0;
     }
@@ -23,9 +21,8 @@ public class PeriodicLoggingStrategy extends LoggingStrategy {
     @Override
     public void logPacket(Packet packet) {
         int currentTick = TickProvider.getInstance().getCurrentTick();
-
         if (initialTime < currentTick && currentTick < initialTime + loggingInterval) {
-            super.loggedPackages.add(packet);
+            super.bloomFilter.put(packet);
         }
 
         updateRouterState(currentTick);
@@ -37,14 +34,11 @@ public class PeriodicLoggingStrategy extends LoggingStrategy {
 
         if (initialTime + NetworkConfigurationConstants.ROUND_TRIP_DELAY < currentTick &&
                 currentTick < initialTime + loggingInterval + NetworkConfigurationConstants.ROUND_TRIP_DELAY) {
-            if (super.loggedPackages.contains(packet)) {
+            if (super.bloomFilter.mightContain(packet)) {
                 return true;
             } else {
-                boolean isFalsePositive = new Random().nextDouble() < NetworkConfigurationConstants.FALSE_POSITIVE_RATE;
-                if (!isFalsePositive) {
-                    this.attackOccurrencesDuringInterval++;
-                }
-                return isFalsePositive;
+                this.attackOccurrencesDuringInterval++;
+                return false;
             }
         }
 

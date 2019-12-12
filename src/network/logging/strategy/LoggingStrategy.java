@@ -2,14 +2,19 @@ package network.logging.strategy;
 
 import network.Packet;
 
-import java.util.HashSet;
+import com.google.common.hash.BloomFilter;
+import com.google.common.hash.Funnel;
+import network.NetworkConfigurationConstants;
 
 public abstract class LoggingStrategy {
 
-    protected HashSet<Packet> loggedPackages;
+    protected BloomFilter<Packet> bloomFilter;
 
     public LoggingStrategy() {
-        this.loggedPackages = new HashSet<>();
+        this.bloomFilter = BloomFilter.create((Funnel<Packet>) (packet, primitiveSink) -> {
+            primitiveSink.putUnencodedChars(packet.getSid().toString());
+            packet.getPidStack().forEach(integer -> primitiveSink.putInt(integer));
+        }, NetworkConfigurationConstants.BLOOM_FILTER_EXPECTED_INSERTIONS, NetworkConfigurationConstants.FALSE_POSITIVE_RATE);
     }
 
     public abstract void logPacket(Packet packet);

@@ -34,14 +34,14 @@ public class Playground {
 
         var victim = selectRandomNonTransientASFromTopology(ast);
 
-        // fillBloomFiltersWithRandomPackets(ast, 100);
+        fillBloomFiltersWithRandomPackets(ast, 100);
         simulateAttackTrafficToAS(ast, victim, 100, 100000);
 
         long endTime = System.currentTimeMillis();
         System.out.println("Packages caught: " + AutonomousSystem.packagesCaught);
         System.out.println("Packages reached: " + AutonomousSystem.packagesReached);
-        System.out.println("False Result count: " + ComprehensiveLoggingStrategy.falseResultCount);
-        System.out.println("Check count: " + ComprehensiveLoggingStrategy.checkCount);
+        // System.out.println("False Result count: " + ComprehensiveLoggingStrategy.falseResultCount);
+        // System.out.println("Check count: " + ComprehensiveLoggingStrategy.checkCount);
         System.out.println((endTime - startTime) / 1000 + "s");
     }
 
