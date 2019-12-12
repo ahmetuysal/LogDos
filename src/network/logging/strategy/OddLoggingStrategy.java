@@ -19,7 +19,7 @@ public class OddLoggingStrategy extends LoggingStrategy {
             if (super.loggedPackages.contains(packet)) {
                 return true;
             } else {
-                return NetworkConfigurationConstants.FALSE_POSITIVE_RATE - new Random().nextDouble()  > 0;
+                return new Random().nextDouble() < NetworkConfigurationConstants.FALSE_POSITIVE_RATE;
             }
         } else {
             return true;

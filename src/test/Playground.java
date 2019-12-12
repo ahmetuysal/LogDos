@@ -4,6 +4,7 @@ import network.AutonomousSystem;
 import network.AutonomousSystemTopology;
 import network.AutonomousSystemType;
 import network.Packet;
+import network.logging.strategy.ComprehensiveLoggingStrategy;
 import util.DataReader;
 import util.TickProvider;
 
@@ -33,11 +34,14 @@ public class Playground {
 
         var victim = selectRandomNonTransientASFromTopology(ast);
 
-        fillBloomFiltersWithRandomPackets(ast, 100);
+        // fillBloomFiltersWithRandomPackets(ast, 100);
         simulateAttackTrafficToAS(ast, victim, 100, 100000);
 
         long endTime = System.currentTimeMillis();
         System.out.println("Packages caught: " + AutonomousSystem.packagesCaught);
+        System.out.println("Packages reached: " + AutonomousSystem.packagesReached);
+        System.out.println("False Result count: " + ComprehensiveLoggingStrategy.falseResultCount);
+        System.out.println("Check count: " + ComprehensiveLoggingStrategy.checkCount);
         System.out.println((endTime - startTime) / 1000 + "s");
     }
 
@@ -60,14 +64,13 @@ public class Playground {
     }
 
     private static AutonomousSystem selectRandomNonTransientASFromTopology(AutonomousSystemTopology ast) {
-        Random rand = new Random();
         Map.Entry<Integer, AutonomousSystem>[] entries = new Map.Entry[0];
         try {
             entries = (Map.Entry<Integer, AutonomousSystem>[]) _table.get(ast.autonomousSystemMap);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        int start = rand.nextInt(entries.length);
+        int start = new Random().nextInt(entries.length);
         for (int i = 0; i < entries.length; i++) {
             int idx = (start + i) % entries.length;
             Map.Entry<Integer, AutonomousSystem> entry = entries[idx];
@@ -110,7 +113,6 @@ public class Playground {
     private static void simulateAttackTrafficToAS(AutonomousSystemTopology ast, AutonomousSystem target,
                                                   int attackerCount, int packetPerAttacker) {
         Random rg = new Random();
-
         for (int i = 0; i < attackerCount; i++) {
             AutonomousSystem start = selectRandomNonTransientASFromTopology(ast);
 
@@ -123,7 +125,8 @@ public class Playground {
                 attackPath.addAll(path.stream().map(AutonomousSystem::getId).collect(Collectors.toList()));
                 System.out.println("Path size " + attackPath.size());
                 for (int j = 0; j < packetPerAttacker; j++) {
-                    var attackPacket = new Packet(UUID.randomUUID(), attackPath);
+                    Stack<Integer> attackPathCopy = (Stack<Integer>) attackPath.clone();
+                    var attackPacket = new Packet(UUID.randomUUID(), attackPathCopy);
                     attacker.sendResponsePacket(attackPacket, true);
                     int randomTickAmount = (int) (rg.nextDouble() * 2 + 0.1);
                     TickProvider.getInstance().tick(randomTickAmount);

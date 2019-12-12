@@ -40,7 +40,7 @@ public class PeriodicLoggingStrategy extends LoggingStrategy {
             if (super.loggedPackages.contains(packet)) {
                 return true;
             } else {
-                boolean isFalsePositive = NetworkConfigurationConstants.FALSE_POSITIVE_RATE - new Random().nextDouble()  > 0;
+                boolean isFalsePositive = new Random().nextDouble() < NetworkConfigurationConstants.FALSE_POSITIVE_RATE;
                 if (!isFalsePositive) {
                     this.attackOccurrencesDuringInterval++;
                 }
