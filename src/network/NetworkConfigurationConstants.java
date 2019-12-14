@@ -6,5 +6,5 @@ public interface NetworkConfigurationConstants {
     int ROUND_TRIP_DELAY = 0;
     int ATTACK_THRESHOLD = 0;
     int BLOOM_FILTER_EXPECTED_INSERTIONS = 100;
-    double FALSE_POSITIVE_RATE = 0.025;
+    double DEFAULT_FALSE_POSITIVE_RATE = 0.025;
 }

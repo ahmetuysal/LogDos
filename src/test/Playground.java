@@ -1,13 +1,12 @@
 package test;
 
-import network.AutonomousSystem;
-import network.AutonomousSystemTopology;
-import network.AutonomousSystemType;
-import network.Packet;
-import network.logging.strategy.ComprehensiveLoggingStrategy;
+import network.*;
+import network.logging.strategy.LoggingStrategyType;
 import util.DataReader;
 import util.TickProvider;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,22 +25,53 @@ public class Playground {
     }
 
     public static void main(String[] args) {
-        AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt");
-        System.out.println("Num routes: " + ast.getRouteSet().size());
-        System.out.println("Num ASs: " + ast.getAutonomousSystems().size());
-
+        double[] falsePositiveRates = {0.0001, 0.001, 0.01, 0.05};
+        int[] numAttackers = {100, 500, 1000, 1500, 2000};
+        int[] totalAttackPackets = {1000000, 2000000, 3000000};
+        LoggingStrategyType[] loggingStrategyTypes = {LoggingStrategyType.COMPREHENSIVE, LoggingStrategyType.ODD, LoggingStrategyType.EVEN, LoggingStrategyType.PERIODIC};
         long startTime = System.currentTimeMillis();
+        long endTime;
 
-        var victim = selectRandomNonTransientASFromTopology(ast);
 
-        fillBloomFiltersWithRandomPackets(ast, 100);
-        simulateAttackTrafficToAS(ast, victim, 100, 100000);
+        List<Playground.SimulationResult> simulationResults = new ArrayList<>();
 
-        long endTime = System.currentTimeMillis();
-        System.out.println("Packages caught: " + AutonomousSystem.packagesCaught);
-        System.out.println("Packages reached: " + AutonomousSystem.packagesReached);
-        // System.out.println("False Result count: " + ComprehensiveLoggingStrategy.falseResultCount);
-        // System.out.println("Check count: " + ComprehensiveLoggingStrategy.checkCount);
+        for (LoggingStrategyType loggingStrategyType : loggingStrategyTypes) {
+            for (double falsePositiveRate : falsePositiveRates) {
+                System.out.println(loggingStrategyType.toString() + " fpRate: " + falsePositiveRate);
+                endTime = System.currentTimeMillis();
+                System.out.println((endTime - startTime) / 1000 + "s");
+                AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt", loggingStrategyType, falsePositiveRate);
+                fillBloomFiltersWithRandomPackets(ast, NetworkConfigurationConstants.BLOOM_FILTER_EXPECTED_INSERTIONS);
+                for (int numAttacker : numAttackers) {
+                    for (int totalAttackPacket : totalAttackPackets) {
+                        for (int i = 0; i < 5; i++) {
+                            var victim = selectRandomNonTransientASFromTopology(ast);
+                            double avgPathLen = simulateAttackTrafficToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker);
+                            Playground.SimulationResult simulationResult = new Playground.SimulationResult(loggingStrategyType, falsePositiveRate, numAttacker, totalAttackPacket, AutonomousSystem.packagesReached, avgPathLen);
+                            simulationResults.add(simulationResult);
+                            AutonomousSystem.packagesReached = 0;
+                            AutonomousSystem.packagesCaught = 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        try {
+            FileWriter csvWriter = new FileWriter("results/simi2.csv");
+            csvWriter.append("Logging Type,Num Attackers,FP Rate,Total Attack Packet,Successful Attack Packet,Average Path Length\n");
+            for (SimulationResult result : simulationResults) {
+                csvWriter.append(result.toString());
+                csvWriter.append("\n");
+            }
+            csvWriter.flush();
+            csvWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        endTime = System.currentTimeMillis();
+
         System.out.println((endTime - startTime) / 1000 + "s");
     }
 
@@ -110,9 +140,21 @@ public class Playground {
     }
 
 
-    private static void simulateAttackTrafficToAS(AutonomousSystemTopology ast, AutonomousSystem target,
-                                                  int attackerCount, int packetPerAttacker) {
+    /**
+     * Simulates Attack Traffic from random non-transient attackers of AutonomousSystemTopology to given Autonomous System.
+     *
+     * @param ast               Autonomous System Topology that the target belongs.
+     * @param target            victim of the attack
+     * @param attackerCount     number of randomly selected attackers
+     * @param packetPerAttacker packet per attacker
+     * @return Average attack path length (excluding both victim and attacker)
+     */
+    private static double simulateAttackTrafficToAS(AutonomousSystemTopology ast, AutonomousSystem target,
+                                                    int attackerCount, int packetPerAttacker) {
         Random rg = new Random();
+
+        long totalPathLength = 0;
+
         for (int i = 0; i < attackerCount; i++) {
             AutonomousSystem start = selectRandomNonTransientASFromTopology(ast);
 
@@ -123,7 +165,7 @@ public class Playground {
                 Collections.reverse(path);
                 var attackPath = new Stack<Integer>();
                 attackPath.addAll(path.stream().map(AutonomousSystem::getId).collect(Collectors.toList()));
-                System.out.println("Path size " + attackPath.size());
+                totalPathLength += attackPath.size();
                 for (int j = 0; j < packetPerAttacker; j++) {
                     Stack<Integer> attackPathCopy = (Stack<Integer>) attackPath.clone();
                     var attackPacket = new Packet(UUID.randomUUID(), attackPathCopy);
@@ -136,6 +178,31 @@ public class Playground {
             }
         }
 
+        return totalPathLength / (double) attackerCount;
+    }
+
+    private static class SimulationResult {
+        LoggingStrategyType loggingStrategyType;
+        double falsePositiveRate;
+        int numAttacker;
+        int totalAttackPacket;
+        int successfulAttackPacket;
+        double averagePathLength;
+
+        public SimulationResult(LoggingStrategyType loggingStrategyType, double falsePositiveRate, int numAttacker,
+                                int totalAttackPacket, int successfulAttackPacket, double averagePathLength) {
+            this.loggingStrategyType = loggingStrategyType;
+            this.falsePositiveRate = falsePositiveRate;
+            this.numAttacker = numAttacker;
+            this.totalAttackPacket = totalAttackPacket;
+            this.successfulAttackPacket = successfulAttackPacket;
+            this.averagePathLength = averagePathLength;
+        }
+
+        @Override
+        public String toString() {
+            return loggingStrategyType + "," + numAttacker + "," + falsePositiveRate + "," + totalAttackPacket + "," + successfulAttackPacket + "," + averagePathLength;
+        }
     }
 
 }

@@ -11,6 +11,13 @@ public class PeriodicLoggingStrategy extends LoggingStrategy {
     int attackOccurrencesDuringInterval;
 
 
+    public PeriodicLoggingStrategy(double falsePositiveRate) {
+        super(falsePositiveRate);
+        this.initialTime = TickProvider.getInstance().getCurrentTick();
+        this.loggingInterval = NetworkConfigurationConstants.INITIAL_LOGGING_INTERVAL;
+        this.attackOccurrencesDuringInterval = 0;
+    }
+
     public PeriodicLoggingStrategy() {
         super();
         this.initialTime = TickProvider.getInstance().getCurrentTick();

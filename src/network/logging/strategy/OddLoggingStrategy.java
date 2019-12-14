@@ -3,6 +3,15 @@ package network.logging.strategy;
 import network.Packet;
 
 public class OddLoggingStrategy extends LoggingStrategy {
+
+    public OddLoggingStrategy() {
+        super();
+    }
+
+    public OddLoggingStrategy(double falsePositiveRate) {
+        super(falsePositiveRate);
+    }
+
     @Override
     public void logPacket(Packet packet) {
         if (packet.getPidStack().size() % 2 == 1) {
