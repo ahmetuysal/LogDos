@@ -1,5 +1,6 @@
 package test;
 
+import config.NetworkConfiguration;
 import network.*;
 import network.logging.strategy.LoggingStrategyType;
 import util.DataReader;
@@ -43,7 +44,7 @@ public class Playground {
                                 AutonomousSystemTopology ast = (AutonomousSystemTopology) theAst.clone();
                                 ast.setLoggingStrategyForAllAutonomousSystems(loggingStrategyType, falsePositiveRate);
                                 System.out.println(loggingStrategyType.toString() + " fpRate: " + falsePositiveRate);
-                                fillBloomFiltersWithRandomPackets(ast, NetworkConfigurationConstants.BLOOM_FILTER_EXPECTED_INSERTIONS);
+                                fillBloomFiltersWithRandomPackets(ast, NetworkConfiguration.BLOOM_FILTER_EXPECTED_INSERTIONS);
                                 for (int numAttacker : numAttackers) {
                                     for (int totalAttackPacket : totalAttackPackets) {
                                         for (int i = 0; i < 5; i++) {
