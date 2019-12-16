@@ -34,13 +34,15 @@ public class Playground {
 
 
         List<Playground.SimulationResult> simulationResults = new ArrayList<>();
+        AutonomousSystemTopology theAst = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt");
 
         loggingStrategyTypes.parallelStream()
                 .forEach(loggingStrategyType -> {
                     falsePositiveRates.parallelStream()
                             .forEach(falsePositiveRate -> {
+                                AutonomousSystemTopology ast = (AutonomousSystemTopology) theAst.clone();
+                                ast.setLoggingStrategyForAllAutonomousSystems(loggingStrategyType, falsePositiveRate);
                                 System.out.println(loggingStrategyType.toString() + " fpRate: " + falsePositiveRate);
-                                AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt", loggingStrategyType, falsePositiveRate);
                                 fillBloomFiltersWithRandomPackets(ast, NetworkConfigurationConstants.BLOOM_FILTER_EXPECTED_INSERTIONS);
                                 for (int numAttacker : numAttackers) {
                                     for (int totalAttackPacket : totalAttackPackets) {
@@ -130,7 +132,7 @@ public class Playground {
                 for (int j = 0; j < packetPerPeer; j++) {
                     var packet = new Packet(UUID.randomUUID(), new Stack<>());
                     packet.getPidStack().add(startAS.getId());
-                    startAS.sendInterestPacket(packet, path);
+                    startAS.sendInterestPacket(packet, path, ast);
                     // int randomTickAmount = (int) (rg.nextDouble() * 2 + 0.1);
                     // TickProvider.getInstance().tick(randomTickAmount);
                 }
@@ -172,7 +174,7 @@ public class Playground {
                 for (int j = 0; j < packetPerAttacker; j++) {
                     Stack<Integer> attackPathCopy = (Stack<Integer>) attackPath.clone();
                     var attackPacket = new Packet(UUID.randomUUID(), attackPathCopy);
-                    boolean isSuccessful = attacker.sendResponsePacket(attackPacket, true);
+                    boolean isSuccessful = attacker.sendResponsePacket(attackPacket, ast, true);
                     if (isSuccessful) {
                         successfulAttackPackets++;
                     }

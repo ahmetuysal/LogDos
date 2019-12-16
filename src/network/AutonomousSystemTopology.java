@@ -1,22 +1,25 @@
 package network;
 
+import network.logging.strategy.LoggingStrategyType;
+
 import java.util.*;
 
-public class AutonomousSystemTopology {
+public class AutonomousSystemTopology implements Cloneable {
 
-    private static AutonomousSystemTopology instance;
-    public HashMap<Integer, AutonomousSystem> autonomousSystemMap = new HashMap<>();
-    private HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths = new HashMap<>(); //Memoization for fast search.
-    private HashSet<Route> routeSet = new HashSet<>();
+    public HashMap<Integer, AutonomousSystem> autonomousSystemMap;
+    private HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths; //Memoization for fast search.
+    private HashSet<Route> routeSet;
 
-    private AutonomousSystemTopology() {
+    public AutonomousSystemTopology(HashMap<Integer, AutonomousSystem> autonomousSystemMap, HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths, HashSet<Route> routeSet) {
+        this.autonomousSystemMap = autonomousSystemMap;
+        this.paths = paths;
+        this.routeSet = routeSet;
     }
 
-    public static synchronized AutonomousSystemTopology getInstance() {
-        if (instance == null) {
-            instance = new AutonomousSystemTopology();
-        }
-        return instance;
+    public AutonomousSystemTopology() {
+        this.autonomousSystemMap = new HashMap<>();
+        this.paths = new HashMap<>();
+        this.routeSet = new HashSet<>();
     }
 
     /**
@@ -41,6 +44,10 @@ public class AutonomousSystemTopology {
 
     public boolean addAutonomousSystem(AutonomousSystem _autonomousSystem) {
         return this.autonomousSystemMap.put(_autonomousSystem.getId(), _autonomousSystem) == null;
+    }
+
+    public void setLoggingStrategyForAllAutonomousSystems(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
+        this.autonomousSystemMap.values().forEach(as -> as.setLoggingStrategy(loggingStrategyType, falsePositiveRate));
     }
 
     public boolean removeAutonomousSystem(AutonomousSystem _autonomousSystem) {
@@ -112,5 +119,11 @@ public class AutonomousSystemTopology {
 
     public Collection<AutonomousSystem> getAutonomousSystems() {
         return autonomousSystemMap.values();
+    }
+
+    @Override
+    public Object clone() {
+        return new AutonomousSystemTopology((HashMap<Integer, AutonomousSystem>) this.autonomousSystemMap.clone(),
+                (HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>>) this.paths.clone(), (HashSet<Route>) this.routeSet.clone());
     }
 }

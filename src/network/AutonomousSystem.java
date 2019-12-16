@@ -19,7 +19,8 @@ public class AutonomousSystem extends Routable {
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type) {
-        this(id, type, LoggingStrategyType.COMPREHENSIVE);
+        super(id);
+        this.type = type;
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType) {
@@ -46,34 +47,40 @@ public class AutonomousSystem extends Routable {
         }
     }
 
-    public void sendInterestPacket(Packet packet, List<AutonomousSystem> path) {
+    public void setLoggingStrategy(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
+        this.loggingStrategy = getLoggingStrategy(loggingStrategyType, falsePositiveRate);
+    }
+
+    public void sendInterestPacket(Packet packet, List<AutonomousSystem> path, AutonomousSystemTopology ast) {
         if (path.isEmpty()) {
-            sendResponsePacket(packet, true);
+            sendResponsePacket(packet, ast, true);
         } else {
             this.loggingStrategy.logPacket(packet);
             packet.getPidStack().add(this.getId());
             var nextAs = path.remove(0);
-            nextAs.sendInterestPacket(packet, path);
+            nextAs.sendInterestPacket(packet, path, ast);
         }
     }
 
 
     /**
      * Returns <code>true</code> if packet has reached its final destination, false otherwise (packet is discarded as attack packet)
+     *
      * @param packet Response packet to send.
      * @return <code>true</code> if packet has reached its final destination, false otherwise
      */
-    public boolean sendResponsePacket(Packet packet) {
-        return sendResponsePacket(packet, false);
+    public boolean sendResponsePacket(Packet packet, AutonomousSystemTopology ast) {
+        return sendResponsePacket(packet, ast, false);
     }
 
     /**
      * Returns <code>true</code> if packet has reached its final destination, false otherwise (packet is discarded as attack packet)
-     * @param packet Response packet to send.
+     *
+     * @param packet    Response packet to send.
      * @param firstTime A flag to indicate this is the sender AS and no check should be done.
      * @return <code>true</code> if packet has reached its final destination, false otherwise
      */
-    public boolean sendResponsePacket(Packet packet, boolean firstTime) {
+    public boolean sendResponsePacket(Packet packet, AutonomousSystemTopology ast, boolean firstTime) {
         if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
             return false;
             // System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
@@ -83,8 +90,8 @@ public class AutonomousSystem extends Routable {
                 // System.out.println("Packet " + packet.toString() + " reached the target: "+ this.getId());
             } else {
                 var nextASId = packet.getPidStack().pop();
-                var nextAS = AutonomousSystemTopology.getInstance().getAutonomousSystemById(nextASId);
-                return nextAS.sendResponsePacket(packet);
+                var nextAS = ast.getAutonomousSystemById(nextASId);
+                return nextAS.sendResponsePacket(packet, ast);
             }
         }
     }
