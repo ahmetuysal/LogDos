@@ -28,7 +28,7 @@ public class Playground {
         double[] falsePositiveRates = {0.0001, 0.001, 0.01, 0.05};
         int[] numAttackers = {100, 500, 1000, 1500, 2000};
         int[] totalAttackPackets = {1000000, 2000000, 3000000};
-        LoggingStrategyType[] loggingStrategyTypes = {LoggingStrategyType.COMPREHENSIVE, LoggingStrategyType.ODD, LoggingStrategyType.EVEN, LoggingStrategyType.PERIODIC};
+        LoggingStrategyType[] loggingStrategyTypes = {LoggingStrategyType.COMPREHENSIVE, LoggingStrategyType.ODD, LoggingStrategyType.EVEN}; //, LoggingStrategyType.PERIODIC};
         long startTime = System.currentTimeMillis();
         long endTime;
 
@@ -58,7 +58,7 @@ public class Playground {
         }
 
         try {
-            FileWriter csvWriter = new FileWriter("results/simi2.csv");
+            FileWriter csvWriter = new FileWriter("results/comp_odd_even.csv");
             csvWriter.append("Logging Type,Num Attackers,FP Rate,Total Attack Packet,Successful Attack Packet,Average Path Length\n");
             for (SimulationResult result : simulationResults) {
                 csvWriter.append(result.toString());
@@ -119,7 +119,7 @@ public class Playground {
 
     private static void simulateLegitimateTrafficToAS(AutonomousSystemTopology ast, AutonomousSystem target,
                                                       int peerCount, int packetPerPeer) {
-        Random rg = new Random();
+        // Random rg = new Random();
 
         for (int i = 0; i < peerCount; i++) {
             AutonomousSystem start = selectRandomASFromTopology(ast);
@@ -130,8 +130,8 @@ public class Playground {
                     var packet = new Packet(UUID.randomUUID(), new Stack<>());
                     packet.getPidStack().add(startAS.getId());
                     startAS.sendInterestPacket(packet, path);
-                    int randomTickAmount = (int) (rg.nextDouble() * 2 + 0.1);
-                    TickProvider.getInstance().tick(randomTickAmount);
+                    // int randomTickAmount = (int) (rg.nextDouble() * 2 + 0.1);
+                    // TickProvider.getInstance().tick(randomTickAmount);
                 }
             } else {
                 i--;
@@ -157,7 +157,9 @@ public class Playground {
 
         for (int i = 0; i < attackerCount; i++) {
             AutonomousSystem start = selectRandomNonTransientASFromTopology(ast);
-
+            while(target.equals(start)) {
+                start = selectRandomNonTransientASFromTopology(ast);
+            }
             var path = ast.findPathBetweenAutonomousSystemsBFS(start, target);
             if (path != null) {
                 // System.out.println("Attacker: " + start.toString() + ", victim: " + target.toString() +", path: "+ path.toString());

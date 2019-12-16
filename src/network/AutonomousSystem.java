@@ -9,12 +9,12 @@ import java.util.Set;
 
 public class AutonomousSystem extends Routable {
 
+    public static int packagesCaught = 0;
+    public static int packagesReached = 0;
     private List<Route> routes = new ArrayList<>();
     private Set<AutonomousSystem> connectedAutonomousSystems = new HashSet<>();
     private AutonomousSystemType type;
     private LoggingStrategy loggingStrategy;
-    public static int packagesCaught = 0;
-    public static int packagesReached = 0;
 
     public AutonomousSystem(int id) {
         this(id, AutonomousSystemType.CORE);
@@ -64,19 +64,18 @@ public class AutonomousSystem extends Routable {
     }
 
     public void sendResponsePacket(Packet packet, boolean firstTime) {
-        if (!packet.getPidStack().isEmpty()) {
-            if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
-                AutonomousSystem.packagesCaught++;
-                // System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
+        if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
+            AutonomousSystem.packagesCaught++;
+            // System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
+        } else {
+            if (packet.getPidStack().isEmpty()) {
+                AutonomousSystem.packagesReached++;
+                // System.out.println("Packet " + packet.toString() + " reached the target: "+ this.getId());
             } else {
                 var nextASId = packet.getPidStack().pop();
                 var nextAS = AutonomousSystemTopology.getInstance().getAutonomousSystemById(nextASId);
                 nextAS.sendResponsePacket(packet);
             }
-        }
-        else {
-            AutonomousSystem.packagesReached++;
-            // System.out.println("Packet " + packet.toString() + " reached the target: "+ this.getId());
         }
     }
 
