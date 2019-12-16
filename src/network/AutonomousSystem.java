@@ -9,8 +9,6 @@ import java.util.Set;
 
 public class AutonomousSystem extends Routable {
 
-    public static int packagesCaught = 0;
-    public static int packagesReached = 0;
     private List<Route> routes = new ArrayList<>();
     private Set<AutonomousSystem> connectedAutonomousSystems = new HashSet<>();
     private AutonomousSystemType type;
@@ -59,22 +57,34 @@ public class AutonomousSystem extends Routable {
         }
     }
 
-    public void sendResponsePacket(Packet packet) {
-        sendResponsePacket(packet, false);
+
+    /**
+     * Returns <code>true</code> if packet has reached its final destination, false otherwise (packet is discarded as attack packet)
+     * @param packet Response packet to send.
+     * @return <code>true</code> if packet has reached its final destination, false otherwise
+     */
+    public boolean sendResponsePacket(Packet packet) {
+        return sendResponsePacket(packet, false);
     }
 
-    public void sendResponsePacket(Packet packet, boolean firstTime) {
+    /**
+     * Returns <code>true</code> if packet has reached its final destination, false otherwise (packet is discarded as attack packet)
+     * @param packet Response packet to send.
+     * @param firstTime A flag to indicate this is the sender AS and no check should be done.
+     * @return <code>true</code> if packet has reached its final destination, false otherwise
+     */
+    public boolean sendResponsePacket(Packet packet, boolean firstTime) {
         if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
-            AutonomousSystem.packagesCaught++;
+            return false;
             // System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
         } else {
             if (packet.getPidStack().isEmpty()) {
-                AutonomousSystem.packagesReached++;
+                return true;
                 // System.out.println("Packet " + packet.toString() + " reached the target: "+ this.getId());
             } else {
                 var nextASId = packet.getPidStack().pop();
                 var nextAS = AutonomousSystemTopology.getInstance().getAutonomousSystemById(nextASId);
-                nextAS.sendResponsePacket(packet);
+                return nextAS.sendResponsePacket(packet);
             }
         }
     }
