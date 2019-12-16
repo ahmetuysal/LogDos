@@ -3,6 +3,15 @@ package network.logging.strategy;
 import network.Packet;
 
 public class EvenLoggingStrategy extends LoggingStrategy {
+
+    public EvenLoggingStrategy() {
+        super();
+    }
+
+    public EvenLoggingStrategy(double falsePositiveRate) {
+        super(falsePositiveRate);
+    }
+
     @Override
     public void logPacket(Packet packet) {
         if (packet.getPidStack().size() % 2 == 0) {
