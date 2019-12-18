@@ -34,7 +34,7 @@ public class Playground {
         long endTime;
 
 
-        List<Playground.SimulationResult> simulationResults = new ArrayList<>();
+        List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
         AutonomousSystemTopology theAst = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt");
 
         loggingStrategyTypes.parallelStream()
@@ -55,6 +55,7 @@ public class Playground {
                                             simulationResult.numAttacker = numAttacker;
                                             simulationResult.totalAttackPacket = totalAttackPacket;
                                             simulationResults.add(simulationResult);
+                                            System.out.println(simulationResults.size());
                                         }
                                     }
                                 }
