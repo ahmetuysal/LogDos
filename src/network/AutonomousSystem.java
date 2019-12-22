@@ -1,5 +1,6 @@
 package network;
 
+import config.NetworkConfiguration;
 import network.logging.strategy.*;
 
 import java.util.ArrayList;
@@ -13,19 +14,18 @@ public class AutonomousSystem extends Routable {
     private Set<AutonomousSystem> connectedAutonomousSystems = new HashSet<>();
     private AutonomousSystemType type;
     private LoggingStrategy loggingStrategy;
-    public static int packagesCaught = 0;
-    public static int packagesReached = 0;
 
     public AutonomousSystem(int id) {
         this(id, AutonomousSystemType.CORE);
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type) {
-        this(id, type, LoggingStrategyType.COMPREHENSIVE);
+        super(id);
+        this.type = type;
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType) {
-        this(id, type, loggingStrategyType, NetworkConfigurationConstants.DEFAULT_FALSE_POSITIVE_RATE);
+        this(id, type, loggingStrategyType, NetworkConfiguration.DEFAULT_FALSE_POSITIVE_RATE);
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
@@ -48,35 +48,52 @@ public class AutonomousSystem extends Routable {
         }
     }
 
-    public void sendInterestPacket(Packet packet, List<AutonomousSystem> path) {
+    public void setLoggingStrategy(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
+        this.loggingStrategy = getLoggingStrategy(loggingStrategyType, falsePositiveRate);
+    }
+
+    public void sendInterestPacket(Packet packet, List<AutonomousSystem> path, AutonomousSystemTopology ast) {
         if (path.isEmpty()) {
-            sendResponsePacket(packet, true);
+            sendResponsePacket(packet, ast, true);
         } else {
             this.loggingStrategy.logPacket(packet);
             packet.getPidStack().add(this.getId());
             var nextAs = path.remove(0);
-            nextAs.sendInterestPacket(packet, path);
+            nextAs.sendInterestPacket(packet, path, ast);
         }
     }
 
-    public void sendResponsePacket(Packet packet) {
-        sendResponsePacket(packet, false);
+
+    /**
+     * Returns <code>true</code> if packet has reached its final destination, false otherwise (packet is discarded as attack packet)
+     *
+     * @param packet Response packet to send.
+     * @return <code>true</code> if packet has reached its final destination, false otherwise
+     */
+    public boolean sendResponsePacket(Packet packet, AutonomousSystemTopology ast) {
+        return sendResponsePacket(packet, ast, false);
     }
 
-    public void sendResponsePacket(Packet packet, boolean firstTime) {
-        if (!packet.getPidStack().isEmpty()) {
-            if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
-                AutonomousSystem.packagesCaught++;
-                // System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
+    /**
+     * Returns <code>true</code> if packet has reached its final destination, false otherwise (packet is discarded as attack packet)
+     *
+     * @param packet    Response packet to send.
+     * @param firstTime A flag to indicate this is the sender AS and no check should be done.
+     * @return <code>true</code> if packet has reached its final destination, false otherwise
+     */
+    public boolean sendResponsePacket(Packet packet, AutonomousSystemTopology ast, boolean firstTime) {
+        if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
+            return false;
+            // System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
+        } else {
+            if (packet.getPidStack().isEmpty()) {
+                return true;
+                // System.out.println("Packet " + packet.toString() + " reached the target: "+ this.getId());
             } else {
                 var nextASId = packet.getPidStack().pop();
-                var nextAS = AutonomousSystemTopology.getInstance().getAutonomousSystemById(nextASId);
-                nextAS.sendResponsePacket(packet);
+                var nextAS = ast.getAutonomousSystemById(nextASId);
+                return nextAS.sendResponsePacket(packet, ast);
             }
-        }
-        else {
-            AutonomousSystem.packagesReached++;
-            // System.out.println("Packet " + packet.toString() + " reached the target: "+ this.getId());
         }
     }
 

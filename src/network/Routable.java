@@ -6,8 +6,6 @@ import java.util.ArrayList;
  * The abstract class that describes any object that can be routed to.
  *
  * @author Kaan Yıldırım @kyildirim, Ahmet Uysal @ahmetuysal, Ceren Kocaoğullar @ckocaogullar15
- * @see Client
- * @see Router
  */
 public abstract class Routable {
 
@@ -15,10 +13,7 @@ public abstract class Routable {
      * Identifier of this <code>Routable</code>.
      */
     private int id;
-    /**
-     * Domain of this <code>Routable</code>.
-     */
-    private Domain domain;
+
     /**
      * A list of <code>Route</code> objects that describe routes originated from this <code>Routable</code>.
      */
@@ -39,21 +34,6 @@ public abstract class Routable {
     public int getId() {
         return this.id;
     }
-
-    /**
-     * @return the <code>Domain</code> of this <code>Routable</code>
-     */
-    public Domain getDomain() {
-        return this.domain;
-    }
-
-    /**
-     * @param domain the <code>Domain</code> of this <code>Routable</code>
-     */
-    public void setDomain(Domain domain) {
-        this.domain = domain;
-    }
-
 
     /**
      * @return the <code>ArrayList</code> of list of <code>Route</code> objects this <code>Routable</code>
