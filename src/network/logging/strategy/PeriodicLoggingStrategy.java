@@ -26,12 +26,11 @@ public class PeriodicLoggingStrategy extends LoggingStrategy {
     }
 
     @Override
-    public void logPacket(Packet packet) {
+    public void logPacket(Packet packet, boolean isForced) {
         int currentTick = TickProvider.getInstance().getCurrentTick();
-        if (initialTime < currentTick && currentTick < initialTime + loggingInterval) {
+        if (isForced || (initialTime < currentTick && currentTick < initialTime + loggingInterval)) {
             super.bloomFilter.put(packet);
         }
-
         updateRouterState(currentTick);
     }
 

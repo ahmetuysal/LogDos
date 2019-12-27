@@ -21,7 +21,11 @@ public abstract class LoggingStrategy {
         }, NetworkConfiguration.BLOOM_FILTER_EXPECTED_INSERTIONS, falsePositiveRate);
     }
 
-    public abstract void logPacket(Packet packet);
+    public void logPacket(Packet packet) {
+        logPacket(packet, false);
+    }
+
+    public abstract void logPacket(Packet packet, boolean isForced);
 
     public abstract boolean checkPacket(Packet packet);
 

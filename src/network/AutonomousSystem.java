@@ -113,6 +113,10 @@ public class AutonomousSystem extends Routable {
         }
     }
 
+    public void logPacket(Packet packet, boolean isForced) {
+        this.loggingStrategy.logPacket(packet, isForced);
+    }
+
     public void logPacket(Packet packet) {
         this.loggingStrategy.logPacket(packet);
     }

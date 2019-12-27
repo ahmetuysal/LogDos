@@ -33,7 +33,6 @@ public class Playground {
         long startTime = System.currentTimeMillis();
         long endTime;
 
-
         List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
 
         loggingStrategyTypes.parallelStream()
@@ -115,7 +114,7 @@ public class Playground {
     private static void fillBloomFiltersWithRandomPackets(AutonomousSystemTopology ast, int packetPerFilter) {
         for (AutonomousSystem as : ast.getAutonomousSystems()) {
             for (int i = 0; i < packetPerFilter; i++) {
-                as.logPacket(new Packet(UUID.randomUUID(), new Stack<>()));
+                as.logPacket(new Packet(UUID.randomUUID(), new Stack<>()), true);
             }
         }
     }

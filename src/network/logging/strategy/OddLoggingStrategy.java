@@ -13,8 +13,8 @@ public class OddLoggingStrategy extends LoggingStrategy {
     }
 
     @Override
-    public void logPacket(Packet packet) {
-        if (packet.getPidStack().size() % 2 == 1) {
+    public void logPacket(Packet packet, boolean isForced) {
+        if (isForced || packet.getPidStack().size() % 2 == 1) {
             super.bloomFilter.put(packet);
         }
     }
