@@ -35,14 +35,12 @@ public class Playground {
 
 
         List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
-        AutonomousSystemTopology theAst = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt");
 
         loggingStrategyTypes.parallelStream()
                 .forEach(loggingStrategyType -> {
                     falsePositiveRates.parallelStream()
                             .forEach(falsePositiveRate -> {
-                                AutonomousSystemTopology ast = (AutonomousSystemTopology) theAst.clone();
-                                ast.setLoggingStrategyForAllAutonomousSystems(loggingStrategyType, falsePositiveRate);
+                                AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt", loggingStrategyType, falsePositiveRate);
                                 System.out.println(loggingStrategyType.toString() + " fpRate: " + falsePositiveRate);
                                 fillBloomFiltersWithRandomPackets(ast, NetworkConfiguration.BLOOM_FILTER_EXPECTED_INSERTIONS);
                                 for (int numAttacker : numAttackers) {

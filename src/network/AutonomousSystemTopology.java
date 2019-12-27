@@ -10,12 +10,6 @@ public class AutonomousSystemTopology implements Cloneable {
     private HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths; //Memoization for fast search.
     private HashSet<Route> routeSet;
 
-    public AutonomousSystemTopology(HashMap<Integer, AutonomousSystem> autonomousSystemMap, HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>> paths, HashSet<Route> routeSet) {
-        this.autonomousSystemMap = autonomousSystemMap;
-        this.paths = paths;
-        this.routeSet = routeSet;
-    }
-
     public AutonomousSystemTopology() {
         this.autonomousSystemMap = new HashMap<>();
         this.paths = new HashMap<>();
@@ -121,9 +115,4 @@ public class AutonomousSystemTopology implements Cloneable {
         return autonomousSystemMap.values();
     }
 
-    @Override
-    public Object clone() {
-        return new AutonomousSystemTopology((HashMap<Integer, AutonomousSystem>) this.autonomousSystemMap.clone(),
-                (HashMap<AutonomousSystem, HashMap<AutonomousSystem, List<AutonomousSystem>>>) this.paths.clone(), (HashSet<Route>) this.routeSet.clone());
-    }
 }

@@ -84,11 +84,9 @@ public class AutonomousSystem extends Routable {
     public boolean sendResponsePacket(Packet packet, AutonomousSystemTopology ast, boolean firstTime) {
         if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
             return false;
-            // System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
         } else {
             if (packet.getPidStack().isEmpty()) {
                 return true;
-                // System.out.println("Packet " + packet.toString() + " reached the target: "+ this.getId());
             } else {
                 var nextASId = packet.getPidStack().pop();
                 var nextAS = ast.getAutonomousSystemById(nextASId);

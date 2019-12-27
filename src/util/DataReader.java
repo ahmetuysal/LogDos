@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class DataReader {
 
-    public static AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName) {
+    public static AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName , LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
         AutonomousSystemTopology autonomousSystemTopology = new AutonomousSystemTopology();
         try {
             BufferedReader bf = new BufferedReader(new FileReader(topologyFileName));
@@ -21,12 +21,12 @@ public class DataReader {
                 int ASId2 = Integer.parseInt(ASIds[1]);
 
                 if (!autonomousSystemTopology.hasAutonomousSystemById(ASId1)) {
-                    AutonomousSystem as1 = new AutonomousSystem(ASId1, AutonomousSystemType.CORE);
+                    AutonomousSystem as1 = new AutonomousSystem(ASId1, AutonomousSystemType.CORE, loggingStrategyType, falsePositiveRate);
                     autonomousSystemTopology.addAutonomousSystem(as1);
                 }
 
                 if (!autonomousSystemTopology.hasAutonomousSystemById(ASId2)) {
-                    AutonomousSystem as2 = new AutonomousSystem(ASId2, AutonomousSystemType.CORE);
+                    AutonomousSystem as2 = new AutonomousSystem(ASId2, AutonomousSystemType.CORE, loggingStrategyType, falsePositiveRate);
                     autonomousSystemTopology.addAutonomousSystem(as2);
                 }
 
@@ -50,7 +50,7 @@ public class DataReader {
                 int asId = Integer.parseInt(line.trim());
                 AutonomousSystem transientAS = autonomousSystemTopology.getAutonomousSystemById(asId);
                 if (transientAS == null) {
-                    transientAS = new AutonomousSystem(asId, AutonomousSystemType.TRANSIENT);
+                    transientAS = new AutonomousSystem(asId, AutonomousSystemType.TRANSIENT, loggingStrategyType, falsePositiveRate);
                     autonomousSystemTopology.addAutonomousSystem(transientAS);
                 } else {
                     transientAS.setType(AutonomousSystemType.TRANSIENT);
