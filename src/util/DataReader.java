@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class DataReader {
 
-    public static AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName , LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
+    public static synchronized AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName , LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
         AutonomousSystemTopology autonomousSystemTopology = new AutonomousSystemTopology();
         try {
             BufferedReader bf = new BufferedReader(new FileReader(topologyFileName));

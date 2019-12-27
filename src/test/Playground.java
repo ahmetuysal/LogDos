@@ -7,6 +7,7 @@ import network.AutonomousSystemType;
 import network.Packet;
 import network.logging.strategy.LoggingStrategyType;
 import util.DataReader;
+import util.TickProvider;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,9 +39,16 @@ public class Playground {
                 new ArrayList<>(Arrays.asList(LoggingStrategyType.COMPREHENSIVE, LoggingStrategyType.ODD, LoggingStrategyType.EVEN)),
                 falsePositiveRates, numAttackers, totalAttackPackets);
 
-        writeSimulationResultsToCSVFile(simulationResults, "results/comp_odd_even.csv");
+        List<Playground.SimulationResult> periodicSimulationResults = simulateLoggingSchemesWithTime(
+                new ArrayList<>(Collections.singletonList(LoggingStrategyType.PERIODIC)),
+                falsePositiveRates, numAttackers, totalAttackPackets, 0, 1000);
+
+        simulationResults.addAll(periodicSimulationResults);
+
+        writeSimulationResultsToCSVFile(simulationResults, "results/comp_odd_even_periodic.csv");
 
         long endTime = System.currentTimeMillis();
+
         System.out.println((endTime - startTime) / 1000 + "s");
     }
 
@@ -78,8 +86,33 @@ public class Playground {
 
     private static List<Playground.SimulationResult> simulateLoggingSchemesWithTime(ArrayList<LoggingStrategyType> loggingStrategyTypes, ArrayList<Double> falsePositiveRates,
                                                                                     int[] numAttackers, int[] totalAttackPackets, int startTick, int endTick) {
-        // TODO: implement periodic logging simulation
-        return null;
+        List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
+
+        loggingStrategyTypes.parallelStream()
+                .forEach(loggingStrategyType -> {
+                    falsePositiveRates.parallelStream()
+                            .forEach(falsePositiveRate -> {
+                                AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt", loggingStrategyType, falsePositiveRate);
+                                System.out.println(loggingStrategyType.toString() + " fpRate: " + falsePositiveRate);
+                                fillBloomFiltersWithRandomPackets(ast, NetworkConfiguration.BLOOM_FILTER_EXPECTED_INSERTIONS);
+                                for (int numAttacker : numAttackers) {
+                                    for (int totalAttackPacket : totalAttackPackets) {
+                                        for (int i = 0; i < 5; i++) {
+                                            var victim = selectRandomNonTransientASFromTopology(ast);
+                                            Playground.SimulationResult simulationResult = simulateAttackTrafficWithTimeToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker, startTick, endTick);
+                                            simulationResult.loggingStrategyType = loggingStrategyType;
+                                            simulationResult.falsePositiveRate = falsePositiveRate;
+                                            simulationResult.numAttacker = numAttacker;
+                                            simulationResult.totalAttackPacket = totalAttackPacket;
+                                            simulationResults.add(simulationResult);
+                                            System.out.println(simulationResults.size());
+                                        }
+                                    }
+                                }
+                            });
+                });
+
+        return simulationResults;
     }
 
     private static void writeSimulationResultsToCSVFile(List<SimulationResult> simulationResults, String fileName) {
@@ -161,6 +194,76 @@ public class Playground {
         }
 
         return new SimulationResult(successfulAttackPackets, totalPathLength / (double) attackerCount);
+    }
+
+
+    /**
+     * Simulates Attack Traffic from random non-transient attackers of AutonomousSystemTopology to given Autonomous System.
+     *
+     * @param ast               Autonomous System Topology that the target belongs.
+     * @param target            victim of the attack
+     * @param attackerCount     number of randomly selected attackers
+     * @param packetPerAttacker packet per attacker
+     * @param startTick         startTick (inclusive)
+     * @param endTick           endTick (exclusive)
+     * @return Average attack path length (excluding both victim and attacker)
+     */
+    private static SimulationResult simulateAttackTrafficWithTimeToAS(AutonomousSystemTopology ast, AutonomousSystem target,
+                                                                      int attackerCount, int packetPerAttacker, int startTick, int endTick) {
+        long totalPathLength = 0;
+        int successfulAttackPackets = 0;
+
+        Random random = new Random();
+
+        ArrayList<Map.Entry<Integer, AttackPacketInfo>> attackPacketTicks = new ArrayList<>();
+
+        for (int i = 0; i < attackerCount; i++) {
+            AutonomousSystem start = selectRandomNonTransientASFromTopology(ast);
+            while (target.equals(start)) {
+                start = selectRandomNonTransientASFromTopology(ast);
+            }
+            var path = ast.findPathBetweenAutonomousSystemsBFS(start, target);
+            if (path != null) {
+                var attacker = path.remove(0);
+                Collections.reverse(path);
+                var attackPath = new Stack<Integer>();
+                attackPath.addAll(path.stream().map(AutonomousSystem::getId).collect(Collectors.toList()));
+                totalPathLength += attackPath.size();
+                for (int j = 0; j < packetPerAttacker; j++) {
+                    int attackTick = startTick + random.nextInt(endTick - startTick);
+                    attackPacketTicks.add(new AbstractMap.SimpleEntry<>(attackTick, new AttackPacketInfo(start, attackPath)));
+                }
+            } else {
+                i--;
+            }
+        }
+
+        TickProvider tickProvider = new TickProvider();
+        ast.setTickProvidersForAllTimeBasedLoggingStrategies(tickProvider);
+
+        attackPacketTicks.sort(Map.Entry.comparingByKey());
+
+        for (Map.Entry<Integer, AttackPacketInfo> attackPacketTick : attackPacketTicks) {
+            Stack<Integer> attackPathCopy = (Stack<Integer>) attackPacketTick.getValue().attackPath.clone();
+            var attackPacket = new Packet(UUID.randomUUID(), attackPathCopy);
+            tickProvider.setCurrentTick(attackPacketTick.getKey());
+            boolean isSuccessful = attackPacketTick.getValue().attacker.sendResponsePacket(attackPacket, ast, true);
+            if (isSuccessful) {
+                successfulAttackPackets++;
+            }
+        }
+
+        return new SimulationResult(successfulAttackPackets, totalPathLength / (double) attackerCount);
+    }
+
+    private static class AttackPacketInfo {
+        AutonomousSystem attacker;
+        Stack<Integer> attackPath;
+
+        public AttackPacketInfo(AutonomousSystem attacker, Stack<Integer> attackPath) {
+            this.attacker = attacker;
+            this.attackPath = attackPath;
+        }
     }
 
     private static class SimulationResult {

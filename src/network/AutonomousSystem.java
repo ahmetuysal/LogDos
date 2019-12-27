@@ -31,10 +31,10 @@ public class AutonomousSystem extends Routable {
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
         super(id);
         this.type = type;
-        this.loggingStrategy = getLoggingStrategy(loggingStrategyType, falsePositiveRate);
+        this.loggingStrategy = getLoggingStrategyForTypeAndFPRate(loggingStrategyType, falsePositiveRate);
     }
 
-    private static LoggingStrategy getLoggingStrategy(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
+    private static LoggingStrategy getLoggingStrategyForTypeAndFPRate(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
         switch (loggingStrategyType) {
             case ODD:
                 return new OddLoggingStrategy(falsePositiveRate);
@@ -48,8 +48,8 @@ public class AutonomousSystem extends Routable {
         }
     }
 
-    public void setLoggingStrategy(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
-        this.loggingStrategy = getLoggingStrategy(loggingStrategyType, falsePositiveRate);
+    public LoggingStrategy getLoggingStrategy() {
+        return loggingStrategy;
     }
 
     public void sendInterestPacket(Packet packet, List<AutonomousSystem> path, AutonomousSystemTopology ast) {
@@ -62,7 +62,6 @@ public class AutonomousSystem extends Routable {
             nextAs.sendInterestPacket(packet, path, ast);
         }
     }
-
 
     /**
      * Returns <code>true</code> if packet has reached its final destination, false otherwise (packet is discarded as attack packet)
