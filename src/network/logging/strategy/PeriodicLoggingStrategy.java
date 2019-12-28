@@ -4,6 +4,8 @@ import config.NetworkConfiguration;
 import network.Packet;
 import util.TickProvider;
 
+import java.util.Random;
+
 public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBasedLoggingStrategy {
 
     private int loggingInterval;
@@ -94,7 +96,7 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
     @Override
     public void setTickProvider(TickProvider tickProvider) {
         this.tickProvider = tickProvider;
-        this.initialTime = 0;
+        this.initialTime = new Random().nextInt(NetworkConfiguration.INITIAL_LOGGING_INTERVAL);
         this.loggingInterval = NetworkConfiguration.INITIAL_LOGGING_INTERVAL;
         this.attackOccurrencesDuringInterval = 0;
     }
