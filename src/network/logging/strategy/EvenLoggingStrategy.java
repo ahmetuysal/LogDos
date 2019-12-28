@@ -13,8 +13,8 @@ public class EvenLoggingStrategy extends LoggingStrategy {
     }
 
     @Override
-    public void logPacket(Packet packet) {
-        if (packet.getPidStack().size() % 2 == 0) {
+    public void logPacket(Packet packet, boolean isForced) {
+        if (isForced || packet.getPidStack().size() % 2 == 0) {
             super.bloomFilter.put(packet);
         }
     }

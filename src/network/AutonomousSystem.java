@@ -31,10 +31,10 @@ public class AutonomousSystem extends Routable {
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
         super(id);
         this.type = type;
-        this.loggingStrategy = getLoggingStrategy(loggingStrategyType, falsePositiveRate);
+        this.loggingStrategy = getLoggingStrategyForTypeAndFPRate(loggingStrategyType, falsePositiveRate);
     }
 
-    private static LoggingStrategy getLoggingStrategy(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
+    private static LoggingStrategy getLoggingStrategyForTypeAndFPRate(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
         switch (loggingStrategyType) {
             case ODD:
                 return new OddLoggingStrategy(falsePositiveRate);
@@ -48,8 +48,8 @@ public class AutonomousSystem extends Routable {
         }
     }
 
-    public void setLoggingStrategy(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
-        this.loggingStrategy = getLoggingStrategy(loggingStrategyType, falsePositiveRate);
+    public LoggingStrategy getLoggingStrategy() {
+        return loggingStrategy;
     }
 
     public void sendInterestPacket(Packet packet, List<AutonomousSystem> path, AutonomousSystemTopology ast) {
@@ -62,7 +62,6 @@ public class AutonomousSystem extends Routable {
             nextAs.sendInterestPacket(packet, path, ast);
         }
     }
-
 
     /**
      * Returns <code>true</code> if packet has reached its final destination, false otherwise (packet is discarded as attack packet)
@@ -84,11 +83,9 @@ public class AutonomousSystem extends Routable {
     public boolean sendResponsePacket(Packet packet, AutonomousSystemTopology ast, boolean firstTime) {
         if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
             return false;
-            // System.out.println("Caught attack packet " + packet.toString() + " at node " + this.getId());
         } else {
             if (packet.getPidStack().isEmpty()) {
                 return true;
-                // System.out.println("Packet " + packet.toString() + " reached the target: "+ this.getId());
             } else {
                 var nextASId = packet.getPidStack().pop();
                 var nextAS = ast.getAutonomousSystemById(nextASId);
@@ -113,6 +110,10 @@ public class AutonomousSystem extends Routable {
         } else {
             this.connectedAutonomousSystems.add((AutonomousSystem) route.getOrigin());
         }
+    }
+
+    public void logPacket(Packet packet, boolean isForced) {
+        this.loggingStrategy.logPacket(packet, isForced);
     }
 
     public void logPacket(Packet packet) {

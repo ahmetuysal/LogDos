@@ -13,7 +13,7 @@ public class ComprehensiveLoggingStrategy extends LoggingStrategy {
     }
 
     @Override
-    public void logPacket(Packet packet) {
+    public void logPacket(Packet packet, boolean isForced) {
         super.bloomFilter.put(packet);
     }
 

@@ -2,19 +2,14 @@ package util;
 
 public class TickProvider {
 
-    private static TickProvider instance;
-
     private int currentTick;
 
-    private TickProvider() {
-        currentTick = 0;
+    public TickProvider() {
+        this(0);
     }
 
-    public static synchronized TickProvider getInstance() {
-        if (instance == null) {
-            instance = new TickProvider();
-        }
-        return instance;
+    public TickProvider(int currentTick) {
+        this.currentTick = currentTick;
     }
 
     public int getCurrentTick() {
