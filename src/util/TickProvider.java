@@ -2,29 +2,29 @@ package util;
 
 public class TickProvider {
 
-    private int currentTick;
+    private double currentTick;
 
     public TickProvider() {
-        this(0);
+        this(0D);
     }
 
-    public TickProvider(int currentTick) {
+    public TickProvider(double currentTick) {
         this.currentTick = currentTick;
     }
 
-    public int getCurrentTick() {
+    public double getCurrentTick() {
         return currentTick;
     }
 
-    public void setCurrentTick(int currentTick) {
+    public void setCurrentTick(double currentTick) {
         this.currentTick = currentTick;
     }
 
     public void tick() {
-        tick(1);
+        tick(1D);
     }
 
-    public void tick(int tickAmount) {
+    public void tick(double tickAmount) {
         this.currentTick += tickAmount;
     }
 

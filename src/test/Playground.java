@@ -41,7 +41,7 @@ public class Playground {
 
         List<Playground.SimulationResult> periodicSimulationResults = simulateLoggingSchemesWithTime(
                 new ArrayList<>(Collections.singletonList(LoggingStrategyType.PERIODIC)),
-                falsePositiveRates, numAttackers, totalAttackPackets, 0, 1000);
+                falsePositiveRates, numAttackers, totalAttackPackets, 0D, 1000D);
 
         simulationResults.addAll(periodicSimulationResults);
 
@@ -85,7 +85,7 @@ public class Playground {
     }
 
     private static List<Playground.SimulationResult> simulateLoggingSchemesWithTime(ArrayList<LoggingStrategyType> loggingStrategyTypes, ArrayList<Double> falsePositiveRates,
-                                                                                    int[] numAttackers, int[] totalAttackPackets, int startTick, int endTick) {
+                                                                                    int[] numAttackers, int[] totalAttackPackets, double startTick, double endTick) {
         List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
 
         loggingStrategyTypes.parallelStream()
@@ -209,13 +209,13 @@ public class Playground {
      * @return Average attack path length (excluding both victim and attacker)
      */
     private static SimulationResult simulateAttackTrafficWithTimeToAS(AutonomousSystemTopology ast, AutonomousSystem target,
-                                                                      int attackerCount, int packetPerAttacker, int startTick, int endTick) {
+                                                                      int attackerCount, int packetPerAttacker, double startTick, double endTick) {
         long totalPathLength = 0;
         int successfulAttackPackets = 0;
 
         Random random = new Random();
 
-        ArrayList<Map.Entry<Integer, AttackPacketInfo>> attackPacketTicks = new ArrayList<>();
+        ArrayList<Map.Entry<Double, AttackPacketInfo>> attackPacketTicks = new ArrayList<>();
 
         for (int i = 0; i < attackerCount; i++) {
             AutonomousSystem start = selectRandomNonTransientASFromTopology(ast);
@@ -230,7 +230,7 @@ public class Playground {
                 attackPath.addAll(path.stream().map(AutonomousSystem::getId).collect(Collectors.toList()));
                 totalPathLength += attackPath.size();
                 for (int j = 0; j < packetPerAttacker; j++) {
-                    int attackTick = startTick + random.nextInt(endTick - startTick);
+                    double attackTick = startTick + random.nextDouble() * (endTick - startTick);
                     attackPacketTicks.add(new AbstractMap.SimpleEntry<>(attackTick, new AttackPacketInfo(start, attackPath)));
                 }
             } else {
@@ -243,7 +243,7 @@ public class Playground {
 
         attackPacketTicks.sort(Map.Entry.comparingByKey());
 
-        for (Map.Entry<Integer, AttackPacketInfo> attackPacketTick : attackPacketTicks) {
+        for (Map.Entry<Double, AttackPacketInfo> attackPacketTick : attackPacketTicks) {
             Stack<Integer> attackPathCopy = (Stack<Integer>) attackPacketTick.getValue().attackPath.clone();
             var attackPacket = new Packet(UUID.randomUUID(), attackPathCopy);
             tickProvider.setCurrentTick(attackPacketTick.getKey());

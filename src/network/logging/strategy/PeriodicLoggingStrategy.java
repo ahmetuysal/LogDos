@@ -50,7 +50,7 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
             return;
         }
 
-        int currentTick = tickProvider.getCurrentTick();
+        double currentTick = tickProvider.getCurrentTick();
         if (initialTime < currentTick && currentTick < initialTime + loggingInterval) {
             super.bloomFilter.put(packet);
         }
@@ -59,7 +59,7 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
 
     @Override
     public boolean checkPacket(Packet packet) {
-        int currentTick = tickProvider.getCurrentTick();
+        double currentTick = tickProvider.getCurrentTick();
 
         if (initialTime + NetworkConfiguration.getInstance().getRoundTripDelay() < currentTick &&
                 currentTick < initialTime + loggingInterval + NetworkConfiguration.getInstance().getRoundTripDelay()) {
@@ -76,7 +76,7 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
         return true;
     }
 
-    private void updateRouterState(int currentTick) {
+    private void updateRouterState(double currentTick) {
         if (currentTick > initialTime + loggingInterval + NetworkConfiguration.getInstance().getRoundTripDelay()) {
             if (attackOccurrencesDuringInterval > NetworkConfiguration.getInstance().getAttackThreshold()) {
                 loggingInterval += NetworkConfiguration.getInstance().getInitialLoggingInterval();
