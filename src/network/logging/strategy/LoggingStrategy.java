@@ -11,14 +11,14 @@ public abstract class LoggingStrategy {
     protected BloomFilter<Packet> bloomFilter;
 
     public LoggingStrategy() {
-        this(NetworkConfiguration.DEFAULT_FALSE_POSITIVE_RATE);
+        this(NetworkConfiguration.getInstance().getDefaultFalsePositiveRate());
     }
 
     public LoggingStrategy(double falsePositiveRate) {
         this.bloomFilter = BloomFilter.create((Funnel<Packet>) (packet, primitiveSink) -> {
             primitiveSink.putUnencodedChars(packet.getSid().toString());
             packet.getPidStack().forEach(integer -> primitiveSink.putInt(integer));
-        }, NetworkConfiguration.BLOOM_FILTER_EXPECTED_INSERTIONS, falsePositiveRate);
+        }, NetworkConfiguration.getInstance().getBloomFilterExpectedInsertions(), falsePositiveRate);
     }
 
     public final void logPacket(Packet packet) {

@@ -63,7 +63,7 @@ public class Playground {
                             .forEach(falsePositiveRate -> {
                                 AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt", loggingStrategyType, falsePositiveRate);
                                 System.out.println(loggingStrategyType.toString() + " fpRate: " + falsePositiveRate);
-                                fillBloomFiltersWithRandomPackets(ast, NetworkConfiguration.BLOOM_FILTER_EXPECTED_INSERTIONS);
+                                fillBloomFiltersWithRandomPackets(ast, NetworkConfiguration.getInstance().getBloomFilterExpectedInsertions());
                                 for (int numAttacker : numAttackers) {
                                     for (int totalAttackPacket : totalAttackPackets) {
                                         for (int i = 0; i < 5; i++) {
@@ -94,7 +94,7 @@ public class Playground {
                             .forEach(falsePositiveRate -> {
                                 AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt", loggingStrategyType, falsePositiveRate);
                                 System.out.println(loggingStrategyType.toString() + " fpRate: " + falsePositiveRate);
-                                fillBloomFiltersWithRandomPackets(ast, NetworkConfiguration.BLOOM_FILTER_EXPECTED_INSERTIONS);
+                                fillBloomFiltersWithRandomPackets(ast, NetworkConfiguration.getInstance().getBloomFilterExpectedInsertions());
                                 for (int numAttacker : numAttackers) {
                                     for (int totalAttackPacket : totalAttackPackets) {
                                         for (int i = 0; i < 5; i++) {

@@ -8,34 +8,34 @@ import java.util.Random;
 
 public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBasedLoggingStrategy {
 
-    private int loggingInterval;
-    private int initialTime;
+    private double loggingInterval;
+    private double initialTime;
     private int attackOccurrencesDuringInterval;
     private TickProvider tickProvider;
 
     public PeriodicLoggingStrategy(double falsePositiveRate) {
         super(falsePositiveRate);
         this.initialTime = 0;
-        this.loggingInterval = NetworkConfiguration.INITIAL_LOGGING_INTERVAL;
+        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingInterval();
         this.attackOccurrencesDuringInterval = 0;
     }
 
     public PeriodicLoggingStrategy() {
         super();
         this.initialTime = 0;
-        this.loggingInterval = NetworkConfiguration.INITIAL_LOGGING_INTERVAL;
+        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingInterval();
         this.attackOccurrencesDuringInterval = 0;
     }
 
-    public int getLoggingInterval() {
+    public double getLoggingInterval() {
         return loggingInterval;
     }
 
-    public void setLoggingInterval(int loggingInterval) {
+    public void setLoggingInterval(double loggingInterval) {
         this.loggingInterval = loggingInterval;
     }
 
-    public int getInitialTime() {
+    public double getInitialTime() {
         return initialTime;
     }
 
@@ -61,8 +61,8 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
     public boolean checkPacket(Packet packet) {
         int currentTick = tickProvider.getCurrentTick();
 
-        if (initialTime + NetworkConfiguration.ROUND_TRIP_DELAY < currentTick &&
-                currentTick < initialTime + loggingInterval + NetworkConfiguration.ROUND_TRIP_DELAY) {
+        if (initialTime + NetworkConfiguration.getInstance().getRoundTripDelay() < currentTick &&
+                currentTick < initialTime + loggingInterval + NetworkConfiguration.getInstance().getRoundTripDelay()) {
             if (super.bloomFilter.mightContain(packet)) {
                 return true;
             } else {
@@ -77,13 +77,13 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
     }
 
     private void updateRouterState(int currentTick) {
-        if (currentTick > initialTime + loggingInterval + NetworkConfiguration.ROUND_TRIP_DELAY) {
-            if (attackOccurrencesDuringInterval > NetworkConfiguration.ATTACK_THRESHOLD) {
-                loggingInterval += NetworkConfiguration.INITIAL_LOGGING_INTERVAL;
+        if (currentTick > initialTime + loggingInterval + NetworkConfiguration.getInstance().getRoundTripDelay()) {
+            if (attackOccurrencesDuringInterval > NetworkConfiguration.getInstance().getAttackThreshold()) {
+                loggingInterval += NetworkConfiguration.getInstance().getInitialLoggingInterval();
                 attackOccurrencesDuringInterval = 0;
             } else {
-                initialTime += loggingInterval + NetworkConfiguration.SILENT_PERIOD;
-                loggingInterval = NetworkConfiguration.INITIAL_LOGGING_INTERVAL;
+                initialTime += loggingInterval + NetworkConfiguration.getInstance().getSilentPeriod();
+                loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingInterval();
             }
         }
     }
@@ -96,8 +96,8 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
     @Override
     public void setTickProvider(TickProvider tickProvider) {
         this.tickProvider = tickProvider;
-        this.initialTime = new Random().nextInt(NetworkConfiguration.INITIAL_LOGGING_INTERVAL);
-        this.loggingInterval = NetworkConfiguration.INITIAL_LOGGING_INTERVAL;
+        this.initialTime = NetworkConfiguration.getInstance().getInitialLoggingInterval() * new Random().nextDouble();
+        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingInterval();
         this.attackOccurrencesDuringInterval = 0;
     }
 }

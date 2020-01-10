@@ -1,10 +1,77 @@
 package config;
 
-public interface NetworkConfiguration {
-    int INITIAL_LOGGING_INTERVAL = 20;
-    int SILENT_PERIOD = 40;
-    int ROUND_TRIP_DELAY = 0;
-    int ATTACK_THRESHOLD = 0;
-    int BLOOM_FILTER_EXPECTED_INSERTIONS = 100;
-    double DEFAULT_FALSE_POSITIVE_RATE = 0.025;
+public class NetworkConfiguration {
+
+    private static NetworkConfiguration _instance;
+    private double initialLoggingInterval;
+    private double silentPeriod;
+    private double roundTripDelay;
+    private int attackThreshold;
+    private int bloomFilterExpectedInsertions;
+    private double defaultFalsePositiveRate;
+
+    private NetworkConfiguration() {
+        this.initialLoggingInterval = 20;
+        this.silentPeriod = 40;
+        this.roundTripDelay = 0;
+        this.attackThreshold = 0;
+        this.bloomFilterExpectedInsertions = 100;
+        this.defaultFalsePositiveRate = 0.025;
+    }
+
+    public static synchronized NetworkConfiguration getInstance() {
+        if (_instance == null) {
+            _instance = new NetworkConfiguration();
+        }
+
+        return _instance;
+    }
+
+    public double getInitialLoggingInterval() {
+        return initialLoggingInterval;
+    }
+
+    public void setInitialLoggingInterval(double initialLoggingInterval) {
+        this.initialLoggingInterval = initialLoggingInterval;
+    }
+
+    public double getSilentPeriod() {
+        return silentPeriod;
+    }
+
+    public void setSilentPeriod(double silentPeriod) {
+        this.silentPeriod = silentPeriod;
+    }
+
+    public double getRoundTripDelay() {
+        return roundTripDelay;
+    }
+
+    public void setRoundTripDelay(double roundTripDelay) {
+        this.roundTripDelay = roundTripDelay;
+    }
+
+    public int getAttackThreshold() {
+        return attackThreshold;
+    }
+
+    public void setAttackThreshold(int attackThreshold) {
+        this.attackThreshold = attackThreshold;
+    }
+
+    public int getBloomFilterExpectedInsertions() {
+        return bloomFilterExpectedInsertions;
+    }
+
+    public void setBloomFilterExpectedInsertions(int bloomFilterExpectedInsertions) {
+        this.bloomFilterExpectedInsertions = bloomFilterExpectedInsertions;
+    }
+
+    public double getDefaultFalsePositiveRate() {
+        return defaultFalsePositiveRate;
+    }
+
+    public void setDefaultFalsePositiveRate(double defaultFalsePositiveRate) {
+        this.defaultFalsePositiveRate = defaultFalsePositiveRate;
+    }
 }
