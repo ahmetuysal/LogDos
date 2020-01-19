@@ -16,14 +16,14 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
     public PeriodicLoggingStrategy(double falsePositiveRate) {
         super(falsePositiveRate);
         this.initialTime = 0;
-        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingInterval();
+        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingPeriod();
         this.attackOccurrencesDuringInterval = 0;
     }
 
     public PeriodicLoggingStrategy() {
         super();
         this.initialTime = 0;
-        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingInterval();
+        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingPeriod();
         this.attackOccurrencesDuringInterval = 0;
     }
 
@@ -79,11 +79,11 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
     private void updateRouterState(double currentTick) {
         if (currentTick > initialTime + loggingInterval + NetworkConfiguration.getInstance().getRoundTripDelay()) {
             if (attackOccurrencesDuringInterval > NetworkConfiguration.getInstance().getAttackThreshold()) {
-                loggingInterval += NetworkConfiguration.getInstance().getInitialLoggingInterval();
+                loggingInterval += NetworkConfiguration.getInstance().getInitialLoggingPeriod();
                 attackOccurrencesDuringInterval = 0;
             } else {
                 initialTime += loggingInterval + NetworkConfiguration.getInstance().getSilentPeriod();
-                loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingInterval();
+                loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingPeriod();
             }
         }
     }
@@ -96,8 +96,8 @@ public class PeriodicLoggingStrategy extends LoggingStrategy implements TimeBase
     @Override
     public void setTickProvider(TickProvider tickProvider) {
         this.tickProvider = tickProvider;
-        this.initialTime = NetworkConfiguration.getInstance().getInitialLoggingInterval() * new Random().nextDouble();
-        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingInterval();
+        this.initialTime = NetworkConfiguration.getInstance().getInitialLoggingPeriod() * new Random().nextDouble();
+        this.loggingInterval = NetworkConfiguration.getInstance().getInitialLoggingPeriod();
         this.attackOccurrencesDuringInterval = 0;
     }
 }

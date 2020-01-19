@@ -35,13 +35,17 @@ public class Playground {
         int[] numAttackers = {100, 500, 1000, 1500, 2000};
         int[] totalAttackPackets = {1000000, 2000000, 3000000};
 
+        ArrayList<Integer> attackThresholds = new ArrayList<>(Arrays.asList(0, 10, 20, 30, 40, 50));
+        ArrayList<Double> initialLoggingPeriods = new ArrayList<>(Collections.singletonList(1D));
+        ArrayList<Double> silentLoggingPeriods = new ArrayList<>(Arrays.asList(5D, 6D, 7D, 8D, 9D, 10D));
+
         List<Playground.SimulationResult> simulationResults = simulateTimelessLoggingSchemes(
                 new ArrayList<>(Arrays.asList(LoggingStrategyType.COMPREHENSIVE, LoggingStrategyType.ODD, LoggingStrategyType.EVEN)),
                 falsePositiveRates, numAttackers, totalAttackPackets);
 
         List<Playground.SimulationResult> periodicSimulationResults = simulateLoggingSchemesWithTime(
                 new ArrayList<>(Collections.singletonList(LoggingStrategyType.PERIODIC)),
-                falsePositiveRates, numAttackers, totalAttackPackets, 0D, 1000D);
+                falsePositiveRates, numAttackers, totalAttackPackets, attackThresholds, initialLoggingPeriods, silentLoggingPeriods, 0D, 1000D);
 
         simulationResults.addAll(periodicSimulationResults);
 
@@ -53,8 +57,10 @@ public class Playground {
     }
 
 
-    private static List<Playground.SimulationResult> simulateTimelessLoggingSchemes(ArrayList<LoggingStrategyType> loggingStrategyTypes, ArrayList<Double> falsePositiveRates,
-                                                                                    int[] numAttackers, int[] totalAttackPackets) {
+    private static List<Playground.SimulationResult> simulateTimelessLoggingSchemes(ArrayList<LoggingStrategyType> loggingStrategyTypes,
+                                                                                    ArrayList<Double> falsePositiveRates,
+                                                                                    int[] numAttackers,
+                                                                                    int[] totalAttackPackets) {
         List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
 
         loggingStrategyTypes.parallelStream()
@@ -84,9 +90,32 @@ public class Playground {
         return simulationResults;
     }
 
-    private static List<Playground.SimulationResult> simulateLoggingSchemesWithTime(ArrayList<LoggingStrategyType> loggingStrategyTypes, ArrayList<Double> falsePositiveRates,
-                                                                                    int[] numAttackers, int[] totalAttackPackets, double startTick, double endTick) {
+    private static List<Playground.SimulationResult> simulateLoggingSchemesWithTime(ArrayList<LoggingStrategyType> loggingStrategyTypes,
+                                                                                    ArrayList<Double> falsePositiveRates,
+                                                                                    int[] numAttackers,
+                                                                                    int[] totalAttackPackets,
+                                                                                    ArrayList<Integer> attackThresholds,
+                                                                                    ArrayList<Double> initialLoggingPeriods,
+                                                                                    ArrayList<Double> silentLoggingPeriods,
+                                                                                    double startTick,
+                                                                                    double endTick) {
         List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
+
+
+        for (int attackThreshold : attackThresholds) {
+            for (double initialLoggingPeriod : initialLoggingPeriods) {
+                for (double silentLoggingPeriod : silentLoggingPeriods) {
+                    NetworkConfiguration networkConfiguration = NetworkConfiguration.getInstance();
+                    networkConfiguration.setAttackThreshold(attackThreshold);
+                    networkConfiguration.setInitialLoggingPeriod(initialLoggingPeriod);
+                    networkConfiguration.setSilentPeriod(silentLoggingPeriod);
+
+
+
+                }
+            }
+        }
+
 
         loggingStrategyTypes.parallelStream()
                 .forEach(loggingStrategyType -> {
@@ -208,8 +237,12 @@ public class Playground {
      * @param endTick           endTick (exclusive)
      * @return Average attack path length (excluding both victim and attacker)
      */
-    private static SimulationResult simulateAttackTrafficWithTimeToAS(AutonomousSystemTopology ast, AutonomousSystem target,
-                                                                      int attackerCount, int packetPerAttacker, double startTick, double endTick) {
+    private static SimulationResult simulateAttackTrafficWithTimeToAS(AutonomousSystemTopology ast,
+                                                                      AutonomousSystem target,
+                                                                      int attackerCount,
+                                                                      int packetPerAttacker,
+                                                                      double startTick,
+                                                                      double endTick) {
         long totalPathLength = 0;
         int successfulAttackPackets = 0;
 
@@ -291,7 +324,7 @@ public class Playground {
 
         @Override
         public String toString() {
-            return loggingStrategyType + "," + numAttacker + "," + falsePositiveRate + "," + totalAttackPacket + "," + successfulAttackPacket + "," + averagePathLength;
+            return new StringBuilder().append(loggingStrategyType).append(",").append(numAttacker).append(",").append(falsePositiveRate).append(",").append(totalAttackPacket).append(",").append(successfulAttackPacket).append(",").append(averagePathLength).toString();
         }
     }
 

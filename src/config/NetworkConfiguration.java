@@ -3,7 +3,7 @@ package config;
 public class NetworkConfiguration {
 
     private static NetworkConfiguration _instance;
-    private double initialLoggingInterval;
+    private double initialLoggingPeriod;
     private double silentPeriod;
     private double roundTripDelay;
     private int attackThreshold;
@@ -11,7 +11,7 @@ public class NetworkConfiguration {
     private double defaultFalsePositiveRate;
 
     private NetworkConfiguration() {
-        this.initialLoggingInterval = 20;
+        this.initialLoggingPeriod = 20;
         this.silentPeriod = 40;
         this.roundTripDelay = 0;
         this.attackThreshold = 0;
@@ -27,12 +27,12 @@ public class NetworkConfiguration {
         return _instance;
     }
 
-    public double getInitialLoggingInterval() {
-        return initialLoggingInterval;
+    public double getInitialLoggingPeriod() {
+        return initialLoggingPeriod;
     }
 
-    public void setInitialLoggingInterval(double initialLoggingInterval) {
-        this.initialLoggingInterval = initialLoggingInterval;
+    public void setInitialLoggingPeriod(double initialLoggingPeriod) {
+        this.initialLoggingPeriod = initialLoggingPeriod;
     }
 
     public double getSilentPeriod() {
