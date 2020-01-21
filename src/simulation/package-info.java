@@ -2,6 +2,6 @@
  * @author ahmetuysal
  */
 @NonNullByDefault
-package test;
+package simulation;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;

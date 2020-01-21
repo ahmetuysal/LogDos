@@ -1,4 +1,4 @@
-package test;
+package simulation;
 
 import config.NetworkConfiguration;
 import network.AutonomousSystem;
@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Playground {
+public class Main {
 
     private static Field _table;
 
@@ -39,11 +39,11 @@ public class Playground {
         ArrayList<Double> initialLoggingPeriods = new ArrayList<>(Collections.singletonList(1D));
         ArrayList<Double> silentLoggingPeriods = new ArrayList<>(Arrays.asList(5D, 6D, 7D, 8D, 9D, 10D));
 
-        List<Playground.SimulationResult> simulationResults = simulateTimelessLoggingSchemes(
+        List<SimulationResult> simulationResults = simulateTimelessLoggingSchemes(
                 new ArrayList<>(Arrays.asList(LoggingStrategyType.COMPREHENSIVE, LoggingStrategyType.ODD, LoggingStrategyType.EVEN)),
                 falsePositiveRates, numAttackers, totalAttackPackets);
 
-        List<Playground.SimulationResult> periodicSimulationResults = simulateLoggingSchemesWithTime(
+        List<SimulationResult> periodicSimulationResults = simulateLoggingSchemesWithTime(
                 new ArrayList<>(Collections.singletonList(LoggingStrategyType.PERIODIC)),
                 falsePositiveRates, numAttackers, totalAttackPackets, attackThresholds, initialLoggingPeriods, silentLoggingPeriods, 0D, 1000D);
 
@@ -57,11 +57,11 @@ public class Playground {
     }
 
 
-    private static List<Playground.SimulationResult> simulateTimelessLoggingSchemes(ArrayList<LoggingStrategyType> loggingStrategyTypes,
-                                                                                    ArrayList<Double> falsePositiveRates,
-                                                                                    int[] numAttackers,
-                                                                                    int[] totalAttackPackets) {
-        List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
+    private static List<SimulationResult> simulateTimelessLoggingSchemes(ArrayList<LoggingStrategyType> loggingStrategyTypes,
+                                                                         ArrayList<Double> falsePositiveRates,
+                                                                         int[] numAttackers,
+                                                                         int[] totalAttackPackets) {
+        List<SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
 
         loggingStrategyTypes.parallelStream()
                 .forEach(loggingStrategyType -> {
@@ -74,7 +74,7 @@ public class Playground {
                                     for (int totalAttackPacket : totalAttackPackets) {
                                         for (int i = 0; i < 5; i++) {
                                             var victim = selectRandomNonTransientASFromTopology(ast);
-                                            Playground.SimulationResult simulationResult = simulateAttackTrafficToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker);
+                                            SimulationResult simulationResult = simulateAttackTrafficToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker);
                                             simulationResult.loggingStrategyType = loggingStrategyType;
                                             simulationResult.falsePositiveRate = falsePositiveRate;
                                             simulationResult.numAttacker = numAttacker;
@@ -90,16 +90,16 @@ public class Playground {
         return simulationResults;
     }
 
-    private static List<Playground.SimulationResult> simulateLoggingSchemesWithTime(ArrayList<LoggingStrategyType> loggingStrategyTypes,
-                                                                                    ArrayList<Double> falsePositiveRates,
-                                                                                    int[] numAttackers,
-                                                                                    int[] totalAttackPackets,
-                                                                                    ArrayList<Integer> attackThresholds,
-                                                                                    ArrayList<Double> initialLoggingPeriods,
-                                                                                    ArrayList<Double> silentLoggingPeriods,
-                                                                                    double startTick,
-                                                                                    double endTick) {
-        List<Playground.SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
+    private static List<SimulationResult> simulateLoggingSchemesWithTime(ArrayList<LoggingStrategyType> loggingStrategyTypes,
+                                                                         ArrayList<Double> falsePositiveRates,
+                                                                         int[] numAttackers,
+                                                                         int[] totalAttackPackets,
+                                                                         ArrayList<Integer> attackThresholds,
+                                                                         ArrayList<Double> initialLoggingPeriods,
+                                                                         ArrayList<Double> silentLoggingPeriods,
+                                                                         double startTick,
+                                                                         double endTick) {
+        List<SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
 
 
         for (int attackThreshold : attackThresholds) {
@@ -128,7 +128,7 @@ public class Playground {
                                     for (int totalAttackPacket : totalAttackPackets) {
                                         for (int i = 0; i < 5; i++) {
                                             var victim = selectRandomNonTransientASFromTopology(ast);
-                                            Playground.SimulationResult simulationResult = simulateAttackTrafficWithTimeToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker, startTick, endTick);
+                                            SimulationResult simulationResult = simulateAttackTrafficWithTimeToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker, startTick, endTick);
                                             simulationResult.loggingStrategyType = loggingStrategyType;
                                             simulationResult.falsePositiveRate = falsePositiveRate;
                                             simulationResult.numAttacker = numAttacker;
@@ -287,45 +287,6 @@ public class Playground {
         }
 
         return new SimulationResult(successfulAttackPackets, totalPathLength / (double) attackerCount);
-    }
-
-    private static class AttackPacketInfo {
-        AutonomousSystem attacker;
-        Stack<Integer> attackPath;
-
-        public AttackPacketInfo(AutonomousSystem attacker, Stack<Integer> attackPath) {
-            this.attacker = attacker;
-            this.attackPath = attackPath;
-        }
-    }
-
-    private static class SimulationResult {
-        LoggingStrategyType loggingStrategyType;
-        double falsePositiveRate;
-        int numAttacker;
-        int totalAttackPacket;
-        int successfulAttackPacket;
-        double averagePathLength;
-
-        public SimulationResult(int successfulAttackPacket, double averagePathLength) {
-            this.successfulAttackPacket = successfulAttackPacket;
-            this.averagePathLength = averagePathLength;
-        }
-
-        public SimulationResult(LoggingStrategyType loggingStrategyType, double falsePositiveRate, int numAttacker,
-                                int totalAttackPacket, int successfulAttackPacket, double averagePathLength) {
-            this.loggingStrategyType = loggingStrategyType;
-            this.falsePositiveRate = falsePositiveRate;
-            this.numAttacker = numAttacker;
-            this.totalAttackPacket = totalAttackPacket;
-            this.successfulAttackPacket = successfulAttackPacket;
-            this.averagePathLength = averagePathLength;
-        }
-
-        @Override
-        public String toString() {
-            return new StringBuilder().append(loggingStrategyType).append(",").append(numAttacker).append(",").append(falsePositiveRate).append(",").append(totalAttackPacket).append(",").append(successfulAttackPacket).append(",").append(averagePathLength).toString();
-        }
     }
 
 }
