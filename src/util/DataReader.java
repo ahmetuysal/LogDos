@@ -1,6 +1,5 @@
 package util;
 
-import exception.NoSuchRoutableTypeException;
 import network.*;
 import network.logging.strategy.LoggingStrategyType;
 

@@ -19,6 +19,7 @@ public class Main {
 
     private static Field _table;
 
+    // Make HashMap.table accessible to get random value faster.
     static {
         try {
             _table = HashMap.class.getDeclaredField("table");

@@ -4,12 +4,10 @@ import network.*;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 
-import java.util.Random;
-
 /**
  * A class that converts a <code>{@link AutonomousSystemTopology}</code> to a <code>{@link org.graphstream.graph.Graph Graph}</code> object.
  *
- * @author Kaan Yıldırım @kyildirim
+ * @author Ahmet Uysal @ahmetuysal, Ceren Kocaogullar @ckocaogullar15, Kaan Yıldırım @kyildirim
  */
 public class NetworkToGraphConverter {
 

@@ -4,7 +4,7 @@
 package exception;
 
 /**
- * @author Ceren Kocaoğullar @ckocaogullar15
+ * @author Ahmet Uysal @ahmetuysal, Ceren Kocaogullar @ckocaogullar15, Kaan Yıldırım @kyildirim
  *
  */
 public class CouldNotGenerateRandomUUIDException extends Exception {
