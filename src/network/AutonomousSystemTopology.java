@@ -20,29 +20,29 @@ public class AutonomousSystemTopology implements Cloneable {
     /**
      * Adds a <code>Route</code> object to this <code>AutonomousSystemTopology<code>.
      *
-     * @param _route <code>Route</code> object to add to this <code>AutonomousSystemTopology<code>.
+     * @param route <code>Route</code> object to add to this <code>AutonomousSystemTopology<code>.
      * @return <code>true</code> if given <code>Route</code> object is added, <code>false</code> otherwise.
      */
-    public boolean addRoute(Route _route) {
-        return this.routeSet.add(_route);
+    public boolean addRoute(Route route) {
+        return this.routeSet.add(route);
     }
 
     /**
      * Removes a <code>Route</code> object from this <code>AutonomousSystemTopology<code>.
      *
-     * @param _route <code>Route</code> object to remove from this <code>AutonomousSystemTopology<code>.
+     * @param route <code>Route</code> object to remove from this <code>AutonomousSystemTopology<code>.
      * @return <code>true</code> if given <code>Route</code> object is removed, <code>false</code> otherwise.
      */
-    public boolean removeRoute(Route _route) {
-        return this.routeSet.remove(_route);
+    public boolean removeRoute(Route route) {
+        return this.routeSet.remove(route);
     }
 
-    public boolean addAutonomousSystem(AutonomousSystem _autonomousSystem) {
-        return this.autonomousSystemMap.put(_autonomousSystem.getId(), _autonomousSystem) == null;
+    public boolean addAutonomousSystem(AutonomousSystem autonomousSystem) {
+        return this.autonomousSystemMap.put(autonomousSystem.getId(), autonomousSystem) == null;
     }
 
-    public boolean removeAutonomousSystem(AutonomousSystem _autonomousSystem) {
-        return this.autonomousSystemMap.remove(_autonomousSystem.getId(), _autonomousSystem);
+    public boolean removeAutonomousSystem(AutonomousSystem autonomousSystem) {
+        return this.autonomousSystemMap.remove(autonomousSystem.getId(), autonomousSystem);
     }
 
     public void setTickProvidersForAllTimeBasedLoggingStrategies(TickProvider tickProvider) {
@@ -104,12 +104,12 @@ public class AutonomousSystemTopology implements Cloneable {
         return path;
     }
 
-    public boolean hasAutonomousSystemById(int _id) {
-        return this.autonomousSystemMap.containsKey(_id);
+    public boolean hasAutonomousSystemById(int id) {
+        return this.autonomousSystemMap.containsKey(id);
     }
 
-    public AutonomousSystem getAutonomousSystemById(int _id) {
-        return this.autonomousSystemMap.get(_id);
+    public AutonomousSystem getAutonomousSystemById(int id) {
+        return this.autonomousSystemMap.get(id);
     }
 
     public HashSet<Route> getRouteSet() {

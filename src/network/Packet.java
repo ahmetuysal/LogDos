@@ -7,9 +7,9 @@ import java.util.UUID;
 
 /**
  * An object that describes a packet that can be send between
- * <code>{@link Routable}</code> objects.
+ * <code>{@link AutonomousSystem}</code> objects.
  *
- * @author Ahmet Uysal @ahmetuysal
+ * @author Ahmet Uysal @ahmetuysal, Ceren Kocaogullar @ckocaogullar15, Kaan Yıldırım @kyildirim
  */
 public class Packet {
 
@@ -25,14 +25,14 @@ public class Packet {
     private Stack<Integer> pidStack;
 
     /**
-     * @param _sid      Universally unique identifier of the requested service.
-     * @param _pidStack Stack of <code>UUID</code> that represents
+     * @param sid      Universally unique identifier of the requested service.
+     * @param pidStack Stack of <code>UUID</code> that represents
      *                  <code>Route</code> objects that this packet traveled
      *                  through.
      */
-    public Packet(UUID _sid, Stack<Integer> _pidStack) {
-        this.sid = _sid;
-        this.pidStack = _pidStack;
+    public Packet(UUID sid, Stack<Integer> pidStack) {
+        this.sid = sid;
+        this.pidStack = pidStack;
     }
 
     /**
@@ -44,11 +44,11 @@ public class Packet {
     }
 
     /**
-     * @param _sid the universally unique identifier of the requested service of
+     * @param sid the universally unique identifier of the requested service of
      *             this <code>Packet</code> to set.
      */
-    public void setSid(UUID _sid) {
-        this.sid = _sid;
+    public void setSid(UUID sid) {
+        this.sid = sid;
     }
 
     /**
@@ -60,12 +60,12 @@ public class Packet {
     }
 
     /**
-     * @param _pidStack Stack of <code>UUID</code> that represents
+     * @param pidStack Stack of <code>UUID</code> that represents
      *                  <code>Route</code> objects that this packet traveled through
      *                  to set.
      */
-    public void setPidStack(Stack<Integer> _pidStack) {
-        this.pidStack = _pidStack;
+    public void setPidStack(Stack<Integer> pidStack) {
+        this.pidStack = pidStack;
     }
 
 

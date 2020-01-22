@@ -8,10 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AutonomousSystem extends Routable {
+public class AutonomousSystem {
 
-    private List<Route> routes = new ArrayList<>();
-    private Set<AutonomousSystem> connectedAutonomousSystems = new HashSet<>();
+    private final int id;
+    private List<Route> routes;
+    private Set<AutonomousSystem> connectedAutonomousSystems;
     private AutonomousSystemType type;
     private LoggingStrategy loggingStrategy;
 
@@ -20,8 +21,7 @@ public class AutonomousSystem extends Routable {
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type) {
-        super(id);
-        this.type = type;
+        this(id, type, LoggingStrategyType.COMPREHENSIVE);
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType) {
@@ -29,8 +29,10 @@ public class AutonomousSystem extends Routable {
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
-        super(id);
+        this.id = id;
         this.type = type;
+        this.routes = new ArrayList<>();
+        this.connectedAutonomousSystems = new HashSet<>();
         this.loggingStrategy = getLoggingStrategyForTypeAndFPRate(loggingStrategyType, falsePositiveRate);
     }
 
@@ -46,6 +48,10 @@ public class AutonomousSystem extends Routable {
             default:
                 return new ComprehensiveLoggingStrategy(falsePositiveRate);
         }
+    }
+
+    public int getId() {
+        return id;
     }
 
     public LoggingStrategy getLoggingStrategy() {
@@ -99,16 +105,16 @@ public class AutonomousSystem extends Routable {
         return type;
     }
 
-    public void setType(AutonomousSystemType _type) {
-        this.type = _type;
+    public void setType(AutonomousSystemType type) {
+        this.type = type;
     }
 
     public void addRoute(Route route) {
         this.routes.add(route);
         if (route.getOrigin().equals(this)) {
-            this.connectedAutonomousSystems.add((AutonomousSystem) route.getDestination());
+            this.connectedAutonomousSystems.add(route.getDestination());
         } else {
-            this.connectedAutonomousSystems.add((AutonomousSystem) route.getOrigin());
+            this.connectedAutonomousSystems.add(route.getOrigin());
         }
     }
 
@@ -128,14 +134,13 @@ public class AutonomousSystem extends Routable {
         return connectedAutonomousSystems;
     }
 
+
     public Route getRouteToAutonomousSystem(AutonomousSystem autonomousSystem) {
         for (Route route : this.routes) {
             if (route.getOrigin().getId() == autonomousSystem.getId() || route.getDestination().getId() == autonomousSystem.getId()) {
                 return route;
             }
         }
-
-        System.out.println(getId() + " " + autonomousSystem.getId() + " " + autonomousSystem.getConnectedAutonomousSystems().contains(this));
         return null;
     }
 
