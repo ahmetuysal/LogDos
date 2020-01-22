@@ -25,7 +25,7 @@ public class AutonomousSystem extends Routable {
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType) {
-        this(id, type, loggingStrategyType, NetworkConfiguration.DEFAULT_FALSE_POSITIVE_RATE);
+        this(id, type, loggingStrategyType, NetworkConfiguration.getInstance().getDefaultFalsePositiveRate());
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
