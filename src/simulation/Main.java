@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -32,25 +33,31 @@ public class Main {
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
 
-        ArrayList<Double> falsePositiveRates = new ArrayList<>(Arrays.asList(0.0001, 0.001, 0.01, 0.05));
-        int[] numAttackers = {100, 500, 1000, 1500, 2000};
-        int[] totalAttackPackets = {1000000, 2000000, 3000000};
+//        ArrayList<Double> falsePositiveRates = new ArrayList<>(Arrays.asList(0.0001, 0.001, 0.01, 0.05));
+//        int[] numAttackers = {100, 500, 1000, 1500, 2000};
+//        int[] totalAttackPackets = {1000000, 2000000, 3000000};
+
+        ArrayList<Double> falsePositiveRates = new ArrayList<>(Collections.singletonList(0.0001));
+        int[] numAttackers = {100};
+        int[] totalAttackPackets = {1000000};
 
         ArrayList<Integer> attackThresholds = new ArrayList<>(Arrays.asList(0, 10, 20, 30, 40, 50));
         ArrayList<Double> initialLoggingPeriods = new ArrayList<>(Collections.singletonList(1D));
         ArrayList<Double> silentLoggingPeriods = new ArrayList<>(Arrays.asList(5D, 6D, 7D, 8D, 9D, 10D));
 
-        List<SimulationResult> simulationResults = simulateTimelessLogDosSchemes(
+        List<TimelessSimulationResult> timelessSimulationResults = simulateTimelessLogDosSchemes(
                 new ArrayList<>(Arrays.asList(LogDosStrategyType.COMPREHENSIVE, LogDosStrategyType.ODD, LogDosStrategyType.EVEN)),
                 falsePositiveRates, numAttackers, totalAttackPackets);
 
-        List<SimulationResult> periodicSimulationResults = simulateLoggingSchemesWithTime(
+        List<TimeBasedSimulationResult> periodicSimulationResults = simulateLoggingSchemesWithTime(
                 new ArrayList<>(Collections.singletonList(LogDosStrategyType.DYNAMIC)),
                 falsePositiveRates, numAttackers, totalAttackPackets, attackThresholds, initialLoggingPeriods, silentLoggingPeriods, 0D, 1000D);
 
-        simulationResults.addAll(periodicSimulationResults);
 
-        writeSimulationResultsToCSVFile(simulationResults, "results/comp_odd_even_periodic.csv");
+        List<SimulationResult> allSimulationResults = Stream.concat(timelessSimulationResults.stream(), periodicSimulationResults.stream())
+                .collect(Collectors.toList());
+
+        writeSimulationResultsToCSVFile(allSimulationResults, "results/comp_odd_even_periodic.csv");
 
         long endTime = System.currentTimeMillis();
 
@@ -58,11 +65,11 @@ public class Main {
     }
 
 
-    private static List<SimulationResult> simulateTimelessLogDosSchemes(ArrayList<LogDosStrategyType> logDosStrategyTypes,
-                                                                        ArrayList<Double> falsePositiveRates,
-                                                                        int[] numAttackers,
-                                                                        int[] totalAttackPackets) {
-        List<SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
+    private static List<TimelessSimulationResult> simulateTimelessLogDosSchemes(ArrayList<LogDosStrategyType> logDosStrategyTypes,
+                                                                                ArrayList<Double> falsePositiveRates,
+                                                                                int[] numAttackers,
+                                                                                int[] totalAttackPackets) {
+        List<TimelessSimulationResult> timelessSimulationResults = Collections.synchronizedList(new ArrayList<>());
 
         logDosStrategyTypes.parallelStream()
                 .forEach(logDosStrategyType -> {
@@ -75,32 +82,32 @@ public class Main {
                                     for (int totalAttackPacket : totalAttackPackets) {
                                         for (int i = 0; i < 5; i++) {
                                             var victim = selectRandomNonTransientASFromTopology(ast);
-                                            SimulationResult simulationResult = simulateAttackTrafficToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker);
-                                            simulationResult.logDosStrategyType = logDosStrategyType;
-                                            simulationResult.falsePositiveRate = falsePositiveRate;
-                                            simulationResult.numAttacker = numAttacker;
-                                            simulationResult.totalAttackPacket = totalAttackPacket;
-                                            simulationResults.add(simulationResult);
-                                            System.out.println(simulationResults.size());
+                                            TimelessSimulationResult timelessSimulationResult = simulateAttackTrafficToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker);
+                                            timelessSimulationResult.logDosStrategyType = logDosStrategyType;
+                                            timelessSimulationResult.falsePositiveRate = falsePositiveRate;
+                                            timelessSimulationResult.numAttacker = numAttacker;
+                                            timelessSimulationResult.totalAttackPacket = totalAttackPacket;
+                                            timelessSimulationResults.add(timelessSimulationResult);
+                                            System.out.println(timelessSimulationResults.size());
                                         }
                                     }
                                 }
                             });
                 });
 
-        return simulationResults;
+        return timelessSimulationResults;
     }
 
-    private static List<SimulationResult> simulateLoggingSchemesWithTime(ArrayList<LogDosStrategyType> logDosStrategyTypes,
-                                                                         ArrayList<Double> falsePositiveRates,
-                                                                         int[] numAttackers,
-                                                                         int[] totalAttackPackets,
-                                                                         ArrayList<Integer> attackThresholds,
-                                                                         ArrayList<Double> initialLoggingPeriods,
-                                                                         ArrayList<Double> silentLoggingPeriods,
-                                                                         double startTick,
-                                                                         double endTick) {
-        List<SimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
+    private static List<TimeBasedSimulationResult> simulateLoggingSchemesWithTime(ArrayList<LogDosStrategyType> logDosStrategyTypes,
+                                                                                 ArrayList<Double> falsePositiveRates,
+                                                                                 int[] numAttackers,
+                                                                                 int[] totalAttackPackets,
+                                                                                 ArrayList<Integer> attackThresholds,
+                                                                                 ArrayList<Double> initialLoggingPeriods,
+                                                                                 ArrayList<Double> silentLoggingPeriods,
+                                                                                 double startTick,
+                                                                                 double endTick) {
+        List<TimeBasedSimulationResult> simulationResults = Collections.synchronizedList(new ArrayList<>());
 
 // TODO: experiment with different dynamic LogDos strategy parameters
 //        for (int attackThreshold : attackThresholds) {
@@ -126,12 +133,12 @@ public class Main {
                                     for (int totalAttackPacket : totalAttackPackets) {
                                         for (int i = 0; i < 5; i++) {
                                             var victim = selectRandomNonTransientASFromTopology(ast);
-                                            SimulationResult simulationResult = simulateAttackTrafficWithTimeToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker, startTick, endTick);
-                                            simulationResult.logDosStrategyType = logDosStrategyType;
-                                            simulationResult.falsePositiveRate = falsePositiveRate;
-                                            simulationResult.numAttacker = numAttacker;
-                                            simulationResult.totalAttackPacket = totalAttackPacket;
-                                            simulationResults.add(simulationResult);
+                                            TimeBasedSimulationResult timeBasedSimulationResult = simulateAttackTrafficWithTimeToAS(ast, victim, numAttacker, totalAttackPacket / numAttacker, startTick, endTick);
+                                            timeBasedSimulationResult.logDosStrategyType = logDosStrategyType;
+                                            timeBasedSimulationResult.falsePositiveRate = falsePositiveRate;
+                                            timeBasedSimulationResult.numAttacker = numAttacker;
+                                            timeBasedSimulationResult.totalAttackPacket = totalAttackPacket;
+                                            simulationResults.add(timeBasedSimulationResult);
                                             System.out.println(simulationResults.size());
                                         }
                                     }
@@ -142,11 +149,11 @@ public class Main {
         return simulationResults;
     }
 
-    private static void writeSimulationResultsToCSVFile(List<SimulationResult> simulationResults, String fileName) {
+    private static void writeSimulationResultsToCSVFile(List<SimulationResult> timelessSimulationResults, String fileName) {
         try {
             FileWriter csvWriter = new FileWriter(fileName);
             csvWriter.append("LogDos Type,Num Attackers,FP Rate,Total Attack Packet,Successful Attack Packet,Average Path Length\n");
-            for (SimulationResult result : simulationResults) {
+            for (SimulationResult result : timelessSimulationResults) {
                 csvWriter.append(result.toString());
                 csvWriter.append("\n");
             }
@@ -191,8 +198,8 @@ public class Main {
      * @param packetPerAttacker packet per attacker
      * @return Average attack path length (excluding both victim and attacker)
      */
-    private static SimulationResult simulateAttackTrafficToAS(AutonomousSystemTopology ast, AutonomousSystem target,
-                                                              int attackerCount, int packetPerAttacker) {
+    private static TimelessSimulationResult simulateAttackTrafficToAS(AutonomousSystemTopology ast, AutonomousSystem target,
+                                                                      int attackerCount, int packetPerAttacker) {
         long totalPathLength = 0;
         int successfulAttackPackets = 0;
         for (int i = 0; i < attackerCount; i++) {
@@ -220,7 +227,7 @@ public class Main {
             }
         }
 
-        return new SimulationResult(successfulAttackPackets, totalPathLength / (double) attackerCount);
+        return new TimelessSimulationResult(successfulAttackPackets, totalPathLength / (double) attackerCount);
     }
 
 
@@ -235,12 +242,12 @@ public class Main {
      * @param endTick           endTick (exclusive)
      * @return Average attack path length (excluding both victim and attacker)
      */
-    private static SimulationResult simulateAttackTrafficWithTimeToAS(AutonomousSystemTopology ast,
-                                                                      AutonomousSystem target,
-                                                                      int attackerCount,
-                                                                      int packetPerAttacker,
-                                                                      double startTick,
-                                                                      double endTick) {
+    private static TimeBasedSimulationResult simulateAttackTrafficWithTimeToAS(AutonomousSystemTopology ast,
+                                                                              AutonomousSystem target,
+                                                                              int attackerCount,
+                                                                              int packetPerAttacker,
+                                                                              double startTick,
+                                                                              double endTick) {
         long totalPathLength = 0;
         int successfulAttackPackets = 0;
 
@@ -284,7 +291,7 @@ public class Main {
             }
         }
 
-        return new SimulationResult(successfulAttackPackets, totalPathLength / (double) attackerCount);
+        return new TimeBasedSimulationResult(successfulAttackPackets, totalPathLength / (double) attackerCount);
     }
 
 }
