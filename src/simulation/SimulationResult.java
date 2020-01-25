@@ -2,7 +2,7 @@ package simulation;
 
 import network.logdos.strategy.LogDosStrategyType;
 
-class SimulationResult {
+public abstract class SimulationResult {
     LogDosStrategyType logDosStrategyType;
     double falsePositiveRate;
     int numAttacker;

@@ -1,6 +1,6 @@
 package network;
 
-import network.logdos.strategy.TimeBasedLogDosStrategy;
+import network.logdos.strategy.TimeBasedLoggingStrategy;
 import util.TickProvider;
 
 import java.util.*;
@@ -45,11 +45,11 @@ public class AutonomousSystemTopology implements Cloneable {
         return this.autonomousSystemMap.remove(autonomousSystem.getId(), autonomousSystem);
     }
 
-    public void setTickProvidersForAllTimeBasedLogDosStrategies(TickProvider tickProvider) {
+    public void setTickProvidersForAllTimeBasedLoggingStrategies(TickProvider tickProvider) {
         this.autonomousSystemMap.values()
                 .forEach(as -> {
-                    if (as.getLogDosStrategy() instanceof TimeBasedLogDosStrategy)
-                        ((TimeBasedLogDosStrategy) as.getLogDosStrategy()).setTickProvider(tickProvider);
+                    if (as.getLogDosStrategy() instanceof TimeBasedLoggingStrategy)
+                        ((TimeBasedLoggingStrategy) as.getLogDosStrategy()).setTickProvider(tickProvider);
                 });
     }
 
