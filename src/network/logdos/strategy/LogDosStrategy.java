@@ -1,10 +1,9 @@
 package network.logdos.strategy;
 
-import network.Packet;
-
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 import config.NetworkConfiguration;
+import network.Packet;
 
 public abstract class LogDosStrategy {
 

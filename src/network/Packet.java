@@ -27,8 +27,8 @@ public class Packet {
     /**
      * @param sid      Universally unique identifier of the requested service.
      * @param pidStack Stack of <code>UUID</code> that represents
-     *                  <code>Route</code> objects that this packet traveled
-     *                  through.
+     *                 <code>Route</code> objects that this packet traveled
+     *                 through.
      */
     public Packet(UUID sid, Stack<Integer> pidStack) {
         this.sid = sid;
@@ -45,7 +45,7 @@ public class Packet {
 
     /**
      * @param sid the universally unique identifier of the requested service of
-     *             this <code>Packet</code> to set.
+     *            this <code>Packet</code> to set.
      */
     public void setSid(UUID sid) {
         this.sid = sid;
@@ -61,8 +61,8 @@ public class Packet {
 
     /**
      * @param pidStack Stack of <code>UUID</code> that represents
-     *                  <code>Route</code> objects that this packet traveled through
-     *                  to set.
+     *                 <code>Route</code> objects that this packet traveled through
+     *                 to set.
      */
     public void setPidStack(Stack<Integer> pidStack) {
         this.pidStack = pidStack;

@@ -1,6 +1,9 @@
 package util;
 
-import network.*;
+import network.AutonomousSystem;
+import network.AutonomousSystemTopology;
+import network.AutonomousSystemType;
+import network.Route;
 import network.logdos.strategy.LogDosStrategyType;
 
 import java.io.BufferedReader;
@@ -9,7 +12,7 @@ import java.io.IOException;
 
 public class DataReader {
 
-    public static synchronized AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName , LogDosStrategyType logDosStrategyType, double falsePositiveRate) {
+    public static synchronized AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName, LogDosStrategyType logDosStrategyType, double falsePositiveRate) {
         AutonomousSystemTopology autonomousSystemTopology = new AutonomousSystemTopology();
         try {
             BufferedReader bf = new BufferedReader(new FileReader(topologyFileName));
