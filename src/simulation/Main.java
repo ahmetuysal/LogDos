@@ -33,13 +33,9 @@ public class Main {
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
 
-//        ArrayList<Double> falsePositiveRates = new ArrayList<>(Arrays.asList(0.0001, 0.001, 0.01, 0.05));
-//        int[] numAttackers = {100, 500, 1000, 1500, 2000};
-//        int[] totalAttackPackets = {1000000, 2000000, 3000000};
-
-        ArrayList<Double> falsePositiveRates = new ArrayList<>(Collections.singletonList(0.0001));
-        int[] numAttackers = {100};
-        int[] totalAttackPackets = {1000000};
+        ArrayList<Double> falsePositiveRates = new ArrayList<>(Arrays.asList(0.0001, 0.001, 0.01, 0.05));
+        int[] numAttackers = {100, 500, 1000, 1500, 2000};
+        int[] totalAttackPackets = {1000000, 2000000, 3000000};
 
         ArrayList<Integer> attackThresholds = new ArrayList<>(Arrays.asList(0, 10, 20, 30, 40, 50));
         ArrayList<Double> initialLoggingPeriods = new ArrayList<>(Collections.singletonList(1D));
