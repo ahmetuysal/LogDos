@@ -1,8 +1,8 @@
-package network.logging.strategy;
+package network.logdos.strategy;
 
 import network.Packet;
 
-public class ComprehensiveLoggingStrategy extends LoggingStrategy {
+public class ComprehensiveLoggingStrategy extends LogDosStrategy {
 
     public ComprehensiveLoggingStrategy() {
         super();

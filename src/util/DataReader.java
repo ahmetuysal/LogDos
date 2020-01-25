@@ -1,7 +1,10 @@
 package util;
 
-import network.*;
-import network.logging.strategy.LoggingStrategyType;
+import network.AutonomousSystem;
+import network.AutonomousSystemTopology;
+import network.AutonomousSystemType;
+import network.Route;
+import network.logdos.strategy.LogDosStrategyType;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,7 +12,7 @@ import java.io.IOException;
 
 public class DataReader {
 
-    public static synchronized AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName , LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
+    public static synchronized AutonomousSystemTopology readAutonomousSystemTopologyFromFile(String topologyFileName, String transientAutonomousSystemsFileName, LogDosStrategyType logDosStrategyType, double falsePositiveRate) {
         AutonomousSystemTopology autonomousSystemTopology = new AutonomousSystemTopology();
         try {
             BufferedReader bf = new BufferedReader(new FileReader(topologyFileName));
@@ -20,12 +23,12 @@ public class DataReader {
                 int ASId2 = Integer.parseInt(ASIds[1]);
 
                 if (!autonomousSystemTopology.hasAutonomousSystemById(ASId1)) {
-                    AutonomousSystem as1 = new AutonomousSystem(ASId1, AutonomousSystemType.CORE, loggingStrategyType, falsePositiveRate);
+                    AutonomousSystem as1 = new AutonomousSystem(ASId1, AutonomousSystemType.CORE, logDosStrategyType, falsePositiveRate);
                     autonomousSystemTopology.addAutonomousSystem(as1);
                 }
 
                 if (!autonomousSystemTopology.hasAutonomousSystemById(ASId2)) {
-                    AutonomousSystem as2 = new AutonomousSystem(ASId2, AutonomousSystemType.CORE, loggingStrategyType, falsePositiveRate);
+                    AutonomousSystem as2 = new AutonomousSystem(ASId2, AutonomousSystemType.CORE, logDosStrategyType, falsePositiveRate);
                     autonomousSystemTopology.addAutonomousSystem(as2);
                 }
 
@@ -49,7 +52,7 @@ public class DataReader {
                 int asId = Integer.parseInt(line.trim());
                 AutonomousSystem transientAS = autonomousSystemTopology.getAutonomousSystemById(asId);
                 if (transientAS == null) {
-                    transientAS = new AutonomousSystem(asId, AutonomousSystemType.TRANSIENT, loggingStrategyType, falsePositiveRate);
+                    transientAS = new AutonomousSystem(asId, AutonomousSystemType.TRANSIENT, logDosStrategyType, falsePositiveRate);
                     autonomousSystemTopology.addAutonomousSystem(transientAS);
                 } else {
                     transientAS.setType(AutonomousSystemType.TRANSIENT);

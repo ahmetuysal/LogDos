@@ -1,7 +1,7 @@
 package network;
 
 import config.NetworkConfiguration;
-import network.logging.strategy.*;
+import network.logdos.strategy.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,36 +14,36 @@ public class AutonomousSystem {
     private List<Route> routes;
     private Set<AutonomousSystem> connectedAutonomousSystems;
     private AutonomousSystemType type;
-    private LoggingStrategy loggingStrategy;
+    private LogDosStrategy logDosStrategy;
 
     public AutonomousSystem(int id) {
         this(id, AutonomousSystemType.CORE);
     }
 
     public AutonomousSystem(int id, AutonomousSystemType type) {
-        this(id, type, LoggingStrategyType.COMPREHENSIVE);
+        this(id, type, LogDosStrategyType.COMPREHENSIVE);
     }
 
-    public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType) {
-        this(id, type, loggingStrategyType, NetworkConfiguration.getInstance().getDefaultFalsePositiveRate());
+    public AutonomousSystem(int id, AutonomousSystemType type, LogDosStrategyType logDosStrategyType) {
+        this(id, type, logDosStrategyType, NetworkConfiguration.getInstance().getDefaultFalsePositiveRate());
     }
 
-    public AutonomousSystem(int id, AutonomousSystemType type, LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
+    public AutonomousSystem(int id, AutonomousSystemType type, LogDosStrategyType logDosStrategyType, double falsePositiveRate) {
         this.id = id;
         this.type = type;
         this.routes = new ArrayList<>();
         this.connectedAutonomousSystems = new HashSet<>();
-        this.loggingStrategy = getLoggingStrategyForTypeAndFPRate(loggingStrategyType, falsePositiveRate);
+        this.logDosStrategy = getLogDosStrategyForTypeAndFPRate(logDosStrategyType, falsePositiveRate);
     }
 
-    private static LoggingStrategy getLoggingStrategyForTypeAndFPRate(LoggingStrategyType loggingStrategyType, double falsePositiveRate) {
-        switch (loggingStrategyType) {
+    private static LogDosStrategy getLogDosStrategyForTypeAndFPRate(LogDosStrategyType logDosStrategyType, double falsePositiveRate) {
+        switch (logDosStrategyType) {
             case ODD:
                 return new OddLoggingStrategy(falsePositiveRate);
             case EVEN:
                 return new EvenLoggingStrategy(falsePositiveRate);
-            case PERIODIC:
-                return new PeriodicLoggingStrategy(falsePositiveRate);
+            case DYNAMIC:
+                return new DynamicLoggingStrategy(falsePositiveRate);
             case COMPREHENSIVE:
             default:
                 return new ComprehensiveLoggingStrategy(falsePositiveRate);
@@ -54,15 +54,15 @@ public class AutonomousSystem {
         return id;
     }
 
-    public LoggingStrategy getLoggingStrategy() {
-        return loggingStrategy;
+    public LogDosStrategy getLogDosStrategy() {
+        return logDosStrategy;
     }
 
     public void sendInterestPacket(Packet packet, List<AutonomousSystem> path, AutonomousSystemTopology ast) {
         if (path.isEmpty()) {
             sendResponsePacket(packet, ast, true);
         } else {
-            this.loggingStrategy.logPacket(packet);
+            this.logDosStrategy.logPacket(packet);
             packet.getPidStack().add(this.getId());
             var nextAs = path.remove(0);
             nextAs.sendInterestPacket(packet, path, ast);
@@ -87,7 +87,7 @@ public class AutonomousSystem {
      * @return <code>true</code> if packet has reached its final destination, false otherwise
      */
     public boolean sendResponsePacket(Packet packet, AutonomousSystemTopology ast, boolean firstTime) {
-        if (!firstTime && !this.loggingStrategy.checkPacket(packet)) {
+        if (!firstTime && !this.logDosStrategy.checkPacket(packet)) {
             return false;
         } else {
             if (packet.getPidStack().isEmpty()) {
@@ -119,11 +119,11 @@ public class AutonomousSystem {
     }
 
     public void logPacket(Packet packet, boolean isForced) {
-        this.loggingStrategy.logPacket(packet, isForced);
+        this.logDosStrategy.logPacket(packet, isForced);
     }
 
     public void logPacket(Packet packet) {
-        this.loggingStrategy.logPacket(packet);
+        this.logDosStrategy.logPacket(packet);
     }
 
     public List<Route> getRoutes() {

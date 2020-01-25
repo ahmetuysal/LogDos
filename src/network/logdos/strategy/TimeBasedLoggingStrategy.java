@@ -1,4 +1,4 @@
-package network.logging.strategy;
+package network.logdos.strategy;
 
 import util.TickProvider;
 
