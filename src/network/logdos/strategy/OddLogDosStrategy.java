@@ -1,14 +1,14 @@
-package network.logging.strategy;
+package network.logdos.strategy;
 
 import network.Packet;
 
-public class OddLoggingStrategy extends LoggingStrategy {
+public class OddLogDosStrategy extends LogDosStrategy {
 
-    public OddLoggingStrategy() {
+    public OddLogDosStrategy() {
         super();
     }
 
-    public OddLoggingStrategy(double falsePositiveRate) {
+    public OddLogDosStrategy(double falsePositiveRate) {
         super(falsePositiveRate);
     }
 

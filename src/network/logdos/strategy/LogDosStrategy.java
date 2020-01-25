@@ -1,4 +1,4 @@
-package network.logging.strategy;
+package network.logdos.strategy;
 
 import network.Packet;
 
@@ -6,15 +6,15 @@ import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 import config.NetworkConfiguration;
 
-public abstract class LoggingStrategy {
+public abstract class LogDosStrategy {
 
     protected BloomFilter<Packet> bloomFilter;
 
-    public LoggingStrategy() {
+    public LogDosStrategy() {
         this(NetworkConfiguration.getInstance().getDefaultFalsePositiveRate());
     }
 
-    public LoggingStrategy(double falsePositiveRate) {
+    public LogDosStrategy(double falsePositiveRate) {
         this.bloomFilter = BloomFilter.create((Funnel<Packet>) (packet, primitiveSink) -> {
             primitiveSink.putUnencodedChars(packet.getSid().toString());
             packet.getPidStack().forEach(integer -> primitiveSink.putInt(integer));

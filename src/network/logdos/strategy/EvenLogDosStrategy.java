@@ -1,14 +1,14 @@
-package network.logging.strategy;
+package network.logdos.strategy;
 
 import network.Packet;
 
-public class EvenLoggingStrategy extends LoggingStrategy {
+public class EvenLogDosStrategy extends LogDosStrategy {
 
-    public EvenLoggingStrategy() {
+    public EvenLogDosStrategy() {
         super();
     }
 
-    public EvenLoggingStrategy(double falsePositiveRate) {
+    public EvenLogDosStrategy(double falsePositiveRate) {
         super(falsePositiveRate);
     }
 

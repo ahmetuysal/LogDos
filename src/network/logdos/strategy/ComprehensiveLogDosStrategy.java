@@ -1,14 +1,14 @@
-package network.logging.strategy;
+package network.logdos.strategy;
 
 import network.Packet;
 
-public class ComprehensiveLoggingStrategy extends LoggingStrategy {
+public class ComprehensiveLogDosStrategy extends LogDosStrategy {
 
-    public ComprehensiveLoggingStrategy() {
+    public ComprehensiveLogDosStrategy() {
         super();
     }
 
-    public ComprehensiveLoggingStrategy(double falsePositiveRate) {
+    public ComprehensiveLogDosStrategy(double falsePositiveRate) {
         super(falsePositiveRate);
     }
 

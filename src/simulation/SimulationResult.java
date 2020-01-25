@@ -1,9 +1,9 @@
 package simulation;
 
-import network.logging.strategy.LoggingStrategyType;
+import network.logdos.strategy.LogDosStrategyType;
 
 class SimulationResult {
-    LoggingStrategyType loggingStrategyType;
+    LogDosStrategyType logDosStrategyType;
     double falsePositiveRate;
     int numAttacker;
     int totalAttackPacket;
@@ -15,9 +15,9 @@ class SimulationResult {
         this.averagePathLength = averagePathLength;
     }
 
-    public SimulationResult(LoggingStrategyType loggingStrategyType, double falsePositiveRate, int numAttacker,
+    public SimulationResult(LogDosStrategyType logDosStrategyType, double falsePositiveRate, int numAttacker,
                             int totalAttackPacket, int successfulAttackPacket, double averagePathLength) {
-        this.loggingStrategyType = loggingStrategyType;
+        this.logDosStrategyType = logDosStrategyType;
         this.falsePositiveRate = falsePositiveRate;
         this.numAttacker = numAttacker;
         this.totalAttackPacket = totalAttackPacket;
@@ -27,6 +27,6 @@ class SimulationResult {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(loggingStrategyType).append(",").append(numAttacker).append(",").append(falsePositiveRate).append(",").append(totalAttackPacket).append(",").append(successfulAttackPacket).append(",").append(averagePathLength).toString();
+        return new StringBuilder().append(logDosStrategyType).append(",").append(numAttacker).append(",").append(falsePositiveRate).append(",").append(totalAttackPacket).append(",").append(successfulAttackPacket).append(",").append(averagePathLength).toString();
     }
 }

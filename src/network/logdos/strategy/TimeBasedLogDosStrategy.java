@@ -1,8 +1,8 @@
-package network.logging.strategy;
+package network.logdos.strategy;
 
 import util.TickProvider;
 
-public interface TimeBasedLoggingStrategy {
+public interface TimeBasedLogDosStrategy {
 
     TickProvider getTickProvider();
 
