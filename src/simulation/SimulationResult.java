@@ -16,7 +16,7 @@ public abstract class SimulationResult {
     }
 
     public SimulationResult(LogDosStrategyType logDosStrategyType, double falsePositiveRate, int numAttacker,
-                                    int totalAttackPacket, int successfulAttackPacket, double averagePathLength) {
+                            int totalAttackPacket, int successfulAttackPacket, double averagePathLength) {
         this.logDosStrategyType = logDosStrategyType;
         this.falsePositiveRate = falsePositiveRate;
         this.numAttacker = numAttacker;
