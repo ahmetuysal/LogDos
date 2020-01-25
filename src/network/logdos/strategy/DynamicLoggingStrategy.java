@@ -6,21 +6,21 @@ import util.TickProvider;
 
 import java.util.Random;
 
-public class DynamicLogDosStrategy extends LogDosStrategy implements TimeBasedLogDosStrategy {
+public class DynamicLoggingStrategy extends LogDosStrategy implements TimeBasedLoggingStrategy {
 
     private double loggingPeriod;
     private double initialTime;
     private int attackOccurrencesDuringPeriod;
     private TickProvider tickProvider;
 
-    public DynamicLogDosStrategy(double falsePositiveRate) {
+    public DynamicLoggingStrategy(double falsePositiveRate) {
         super(falsePositiveRate);
         this.initialTime = 0;
         this.loggingPeriod = NetworkConfiguration.getInstance().getInitialLoggingPeriod();
         this.attackOccurrencesDuringPeriod = 0;
     }
 
-    public DynamicLogDosStrategy() {
+    public DynamicLoggingStrategy() {
         super();
         this.initialTime = 0;
         this.loggingPeriod = NetworkConfiguration.getInstance().getInitialLoggingPeriod();
