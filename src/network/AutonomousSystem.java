@@ -39,14 +39,14 @@ public class AutonomousSystem {
     private static LogDosStrategy getLogDosStrategyForTypeAndFPRate(LogDosStrategyType logDosStrategyType, double falsePositiveRate) {
         switch (logDosStrategyType) {
             case ODD:
-                return new OddLogDosStrategy(falsePositiveRate);
+                return new OddLoggingStrategy(falsePositiveRate);
             case EVEN:
-                return new EvenLogDosStrategy(falsePositiveRate);
+                return new EvenLoggingStrategy(falsePositiveRate);
             case DYNAMIC:
-                return new DynamicLogDosStrategy(falsePositiveRate);
+                return new DynamicLoggingStrategy(falsePositiveRate);
             case COMPREHENSIVE:
             default:
-                return new ComprehensiveLogDosStrategy(falsePositiveRate);
+                return new ComprehensiveLoggingStrategy(falsePositiveRate);
         }
     }
 

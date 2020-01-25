@@ -300,7 +300,7 @@ public class Main {
         }
 
         TickProvider tickProvider = new TickProvider();
-        ast.setTickProvidersForAllTimeBasedLogDosStrategies(tickProvider);
+        ast.setTickProvidersForAllTimeBasedLoggingStrategies(tickProvider);
 
         attackPacketsWithTicks.sort(Map.Entry.comparingByKey());
 
