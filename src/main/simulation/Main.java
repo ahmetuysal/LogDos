@@ -77,7 +77,7 @@ public class Main {
                 .forEach(logDosStrategyType -> {
                     falsePositiveRates.parallelStream()
                             .forEach(falsePositiveRate -> {
-                                AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/dataTexts/AS-topology.txt", "src/dataTexts/transAs.txt", logDosStrategyType, falsePositiveRate);
+                                AutonomousSystemTopology ast = DataReader.readAutonomousSystemTopologyFromFile("src/resources/topology/AS-topology.txt", "src/resources/topology/transAs.txt", logDosStrategyType, falsePositiveRate);
                                 System.out.println(logDosStrategyType.toString() + " fpRate: " + falsePositiveRate);
                                 fillBloomFiltersWithRandomPackets(ast, NetworkConfiguration.getInstance().getBloomFilterExpectedInsertions());
                                 for (int numAttacker : numAttackers) {
